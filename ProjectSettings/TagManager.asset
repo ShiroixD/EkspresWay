@@ -3,7 +3,13 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - GameManager
+  - Tooth
+  - Teeth
+  - MaterialBreak
+  - MaterialObstacle
+  - Background
   layers:
   - Default
   - TransparentFX
