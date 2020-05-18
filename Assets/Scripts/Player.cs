@@ -4,15 +4,24 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    // Start is called before the first frame update
+    public SwipeDetector SwipeDetector;
+
+    private void Awake()
+    {
+        SwipeDetector.OnSwipe += Move;
+    }
     void Start()
     {
         
     }
 
-    // Update is called once per frame
     void Update()
     {
         
+    }
+
+    private void Move(SwipeData data)
+    {
+        Debug.Log("Swipe in Direction: " + data.Direction);
     }
 }
