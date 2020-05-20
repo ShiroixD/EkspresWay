@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Data.SqlTypes;
 using UnityEngine;
 
 public class Player : MonoBehaviour
@@ -22,12 +23,12 @@ public class Player : MonoBehaviour
 
             if (touch.phase == TouchPhase.Began)
             {
-                if (touch.position.x < Screen.width / 2)
+                if (touch.position.x < Screen.width / 2 || Input.GetKeyDown("A"))
                 {
                     transform.position = new Vector3(_startingPos.x - 0.3f, _startingPos.y, _startingPos.z);
                     transform.rotation = new Quaternion(_startingRot.x, _startingRot.y + 70.0f, _startingRot.z, _startingRot.w);
                 }
-                else if (touch.position.x > Screen.width / 2)
+                else if (touch.position.x > Screen.width / 2 || Input.GetKeyDown("D"))
                 {
                     transform.position = new Vector3(_startingPos.x + 0.3f, _startingPos.y, _startingPos.z);
                     transform.rotation = new Quaternion(_startingRot.x, _startingRot.y - 70.0f, _startingRot.z, _startingRot.w);

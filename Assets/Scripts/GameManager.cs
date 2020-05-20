@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+
+    public double ObstacleTimeGenerator;
+    public GameObject ObstacleArea;
+    public Obstacle[] ObstaclesObjects;
+
     // Start is called before the first frame update
     void Start()
     {
