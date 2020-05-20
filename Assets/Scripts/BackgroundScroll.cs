@@ -7,10 +7,11 @@ public class BackgroundScroll : MonoBehaviour
     public float ScrollSpeed = 5f;
     public float DistanceLimit = 34f;
     public GameObject Player;
+    private Vector3 _startPos;
 
     void Start()
     {
-        //_startPos = transform.position;
+        _startPos = transform.position;
     }
 
     void Update()
@@ -25,7 +26,7 @@ public class BackgroundScroll : MonoBehaviour
 
         transform.position = new Vector3(transform.position.x, transform.position.y - Time.deltaTime * ScrollSpeed, transform.position.z);
 
-        //float newPos = Mathf.Repeat(Time.time * ScrollSpeed, 35);
-        //transform.position = _startPos + Vector2.down * newPos;
+        float newPos = Mathf.Repeat(Time.time * ScrollSpeed, 35);
+        transform.position = _startPos + Vector3.down * newPos;
     }
 }

@@ -8,16 +8,25 @@ public class GameManager : MonoBehaviour
     public double ObstacleTimeGenerator;
     public GameObject ObstacleArea;
     public Obstacle[] ObstaclesObjects;
+    private int _pointsCounter;
 
-    // Start is called before the first frame update
     void Start()
+    {
+        _pointsCounter = 0;
+    }
+
+    void Update()
     {
         
     }
 
-    // Update is called once per frame
-    void Update()
+    public int GetCurrentPoints()
     {
-        
+        return _pointsCounter;
+    }
+
+    public void IncreasePoints(int points)
+    {
+        _pointsCounter += points;
     }
 }
