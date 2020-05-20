@@ -23,12 +23,12 @@ public class Player : MonoBehaviour
 
             if (touch.phase == TouchPhase.Began)
             {
-                if (touch.position.x < Screen.width / 2 || Input.GetKeyDown("A"))
+                if (touch.position.x < Screen.width / 2)
                 {
                     transform.position = new Vector3(_startingPos.x - 0.3f, _startingPos.y, _startingPos.z);
                     transform.rotation = new Quaternion(_startingRot.x, _startingRot.y + 70.0f, _startingRot.z, _startingRot.w);
                 }
-                else if (touch.position.x > Screen.width / 2 || Input.GetKeyDown("D"))
+                else if (touch.position.x > Screen.width / 2)
                 {
                     transform.position = new Vector3(_startingPos.x + 0.3f, _startingPos.y, _startingPos.z);
                     transform.rotation = new Quaternion(_startingRot.x, _startingRot.y - 70.0f, _startingRot.z, _startingRot.w);
