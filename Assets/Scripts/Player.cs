@@ -25,13 +25,13 @@ public class Player : MonoBehaviour
             {
                 if (touch.position.x < Screen.width / 2)
                 {
-                    transform.position = new Vector3(_startingPos.x - 0.3f, _startingPos.y, _startingPos.z);
-                    transform.rotation = new Quaternion(_startingRot.x, _startingRot.y + 70.0f, _startingRot.z, _startingRot.w);
+                    transform.position = new Vector3(_startingPos.x - 0.4f, _startingPos.y, _startingPos.z);
+                  //  transform.rotation = new Quaternion(_startingRot.x, _startingRot.y + 70.0f, _startingRot.z, _startingRot.w);
                 }
                 else if (touch.position.x > Screen.width / 2)
                 {
-                    transform.position = new Vector3(_startingPos.x + 0.3f, _startingPos.y, _startingPos.z);
-                    transform.rotation = new Quaternion(_startingRot.x, _startingRot.y - 70.0f, _startingRot.z, _startingRot.w);
+                    transform.position = new Vector3(_startingPos.x + 0.4f, _startingPos.y, _startingPos.z);
+                 //   transform.rotation = new Quaternion(_startingRot.x, _startingRot.y - 70.0f, _startingRot.z, _startingRot.w);
 
                 }
             }
@@ -39,7 +39,7 @@ public class Player : MonoBehaviour
             if (touch.phase == TouchPhase.Ended)
             {
                 transform.position = _startingPos;
-                transform.rotation = _startingRot;
+             //   transform.rotation = _startingRot;
             }
         }
     }

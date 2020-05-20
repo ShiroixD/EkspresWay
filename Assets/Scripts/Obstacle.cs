@@ -27,7 +27,7 @@ public class Obstacle : MonoBehaviour
     }
 
 
-    private void OnTriggerEnter(Collider other)
+    private void OnTriggerExit(Collider other)
     {
         Debug.Log(other.gameObject.tag.ToString());
         switch (this.gameObject.tag)
