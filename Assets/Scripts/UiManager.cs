@@ -2,11 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class UiManager : MonoBehaviour
 {
     public GameManager GameManager;
-    public Text PointsText;
+    public TextMeshProUGUI PointsText;
 
     void Start()
     {
