@@ -7,6 +7,8 @@ public class Player : MonoBehaviour
 {
     private Vector3 _startingPos;
     private Quaternion _startingRot;
+    public GameObject Model;
+    public GameObject Physics;
 
     void Start()
     {
@@ -26,12 +28,12 @@ public class Player : MonoBehaviour
                 if (touch.position.x < Screen.width / 2)
                 {
                     transform.position = new Vector3(_startingPos.x - 0.4f, _startingPos.y, _startingPos.z);
-                  //  transform.rotation = new Quaternion(_startingRot.x, _startingRot.y + 70.0f, _startingRot.z, _startingRot.w);
+                    Model.transform.rotation = new Quaternion(_startingRot.x, _startingRot.y + 70.0f, _startingRot.z, _startingRot.w);
                 }
                 else if (touch.position.x > Screen.width / 2)
                 {
                     transform.position = new Vector3(_startingPos.x + 0.4f, _startingPos.y, _startingPos.z);
-                 //   transform.rotation = new Quaternion(_startingRot.x, _startingRot.y - 70.0f, _startingRot.z, _startingRot.w);
+                    Model.transform.rotation = new Quaternion(_startingRot.x, _startingRot.y - 70.0f, _startingRot.z, _startingRot.w);
 
                 }
             }
