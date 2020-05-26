@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
     private Quaternion _startingRot;
     public GameObject Model;
     public GameObject Physics;
+    public SwipeDetector SwipeDetector;
 
     void Start()
     {
@@ -19,30 +20,29 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        if (Input.touchCount > 0)
+        
+    }
+
+    public void TiltToSide(SwipeData data)
+    {
+        Debug.Log("Swipe in Direction: " + data.Direction);
+
+        if (data.Direction == SwipeDirection.Left)
         {
-            Touch touch = Input.GetTouch(0);
-
-            if (touch.phase == TouchPhase.Began)
-            {
-                if (touch.position.x < Screen.width / 2)
-                {
-                    transform.position = new Vector3(_startingPos.x - 0.4f, _startingPos.y, _startingPos.z);
-                    Model.transform.rotation = new Quaternion(_startingRot.x, _startingRot.y + 70.0f, _startingRot.z, _startingRot.w);
-                }
-                else if (touch.position.x > Screen.width / 2)
-                {
-                    transform.position = new Vector3(_startingPos.x + 0.4f, _startingPos.y, _startingPos.z);
-                    Model.transform.rotation = new Quaternion(_startingRot.x, _startingRot.y - 70.0f, _startingRot.z, _startingRot.w);
-
-                }
-            }
-
-            if (touch.phase == TouchPhase.Ended)
-            {
-                transform.position = _startingPos;
-             //   transform.rotation = _startingRot;
-            }
+            Physics.transform.position = new Vector3(_startingPos.x - 0.4f, _startingPos.y, _startingPos.z);
+            Model.transform.rotation = new Quaternion(_startingRot.x, _startingRot.y + 70.0f, _startingRot.z, _startingRot.w);
         }
+        else if (data.Direction == SwipeDirection.Right)
+        {
+            Physics.transform.position = new Vector3(_startingPos.x + 0.4f, _startingPos.y, _startingPos.z);
+            Model.transform.rotation = new Quaternion(_startingRot.x, _startingRot.y - 70.0f, _startingRot.z, _startingRot.w);
+
+        }
+    }
+
+    public void ReturnToNormal()
+    {
+        Physics.transform.position = new Vector3(_startingPos.x, _startingPos.y, _startingPos.z);
+        Model.transform.rotation = new Quaternion(_startingRot.x, _startingRot.y, _startingRot.z, _startingRot.w);
     }
 }

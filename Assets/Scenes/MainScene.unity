@@ -177,7 +177,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: RIGHT HOLD
+  m_text: RIGHT SWIPE
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -246,7 +246,7 @@ MonoBehaviour:
   m_margin: {x: 0, y: 0, z: 0, w: 0}
   m_textInfo:
     textComponent: {fileID: 40919616}
-    characterCount: 10
+    characterCount: 11
     spriteCount: 0
     spaceCount: 1
     wordCount: 2
@@ -601,7 +601,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'LEFT HOLD
+  m_text: 'LEFT SWIPE
 
 '
   m_isRightToLeft: 0
@@ -672,7 +672,7 @@ MonoBehaviour:
   m_margin: {x: 0.5673828, y: 0, z: -1.1340637, w: 0}
   m_textInfo:
     textComponent: {fileID: 223974228}
-    characterCount: 10
+    characterCount: 11
     spriteCount: 0
     spaceCount: 2
     wordCount: 2
@@ -1197,6 +1197,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Model: {fileID: 216197870}
   Physics: {fileID: 1959175500}
+  SwipeDetector: {fileID: 2062205279}
 --- !u!1001 &944426422
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2088,6 +2089,7 @@ GameObject:
   - component: {fileID: 2062205276}
   - component: {fileID: 2062205277}
   - component: {fileID: 2062205278}
+  - component: {fileID: 2062205279}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: GameManager
@@ -2138,6 +2140,22 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   GameManager: {fileID: 2062205277}
   PointsText: {fileID: 84739860}
+--- !u!114 &2062205279
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2062205275}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a53ed6d693f20c64493df1db315758f5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  DetectSwipeOnlyAfterRelease: 0
+  MinDistanceForSwipe: 10
+  SwipeTimeFrame: 0.1
+  PlayerCharacter: {fileID: 731826894}
 --- !u!1 &2120349027
 GameObject:
   m_ObjectHideFlags: 0
