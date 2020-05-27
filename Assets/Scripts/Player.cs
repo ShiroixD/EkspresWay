@@ -5,11 +5,11 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    private Vector3 _startingPos;
-    private Quaternion _startingRot;
     public GameObject Model;
     public GameObject Physics;
     public SwipeDetector SwipeDetector;
+    private Vector3 _startingPos;
+    private Quaternion _startingRot;
 
     void Start()
     {
@@ -28,15 +28,11 @@ public class Player : MonoBehaviour
 
         if (data.Direction == SwipeDirection.Left)
         {
-            Physics.transform.position = new Vector3(_startingPos.x - 0.4f, _startingPos.y, _startingPos.z);
-            Model.transform.position = new Vector3(_startingPos.x - 0.4f, _startingPos.y, _startingPos.z);
-            Model.transform.rotation = new Quaternion(_startingRot.x, _startingRot.y + 70.0f, _startingRot.z, _startingRot.w);
+            Physics.transform.position = new Vector3(_startingPos.x - 1f, _startingPos.y, _startingPos.z);
         }
         else if (data.Direction == SwipeDirection.Right)
         {
-            Physics.transform.position = new Vector3(_startingPos.x + 0.4f, _startingPos.y, _startingPos.z);
-            Model.transform.position = new Vector3(_startingPos.x + 0.4f, _startingPos.y, _startingPos.z);
-            Model.transform.rotation = new Quaternion(_startingRot.x, _startingRot.y - 70.0f, _startingRot.z, _startingRot.w);
+            Physics.transform.position = new Vector3(_startingPos.x + 1f, _startingPos.y, _startingPos.z);
 
         }
     }
@@ -45,7 +41,7 @@ public class Player : MonoBehaviour
     {
         Debug.Log("Returning to normal");
         Physics.transform.position = new Vector3(_startingPos.x, _startingPos.y, _startingPos.z);
-        Model.transform.position = new Vector3(_startingPos.x, _startingPos.y, _startingPos.z);
-        Model.transform.rotation = new Quaternion(_startingRot.x, _startingRot.y, _startingRot.z, _startingRot.w);
+        //Model.transform.position = new Vector3(_startingPos.x, _startingPos.y, _startingPos.z);
+        //Model.transform.rotation = new Quaternion(_startingRot.x, _startingRot.y, _startingRot.z, _startingRot.w);
     }
 }

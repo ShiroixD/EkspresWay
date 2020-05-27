@@ -8,6 +8,8 @@ public class SwipeDetector : MonoBehaviour
     private Vector2 _fingerDownPosition;
     private Vector2 _fingerUpPosition;
     private bool _fingerPushed = false;
+    private SwipeDirection _currentSwipeDirection = SwipeDirection.None;
+    public Animator PlayerAnimator;
     public float SwipeTimeFrame = 0.1f;
     public Player PlayerCharacter;
 
@@ -40,6 +42,16 @@ public class SwipeDetector : MonoBehaviour
 
     private IEnumerator ReturnToNormalState(float seconds)
     {
+        if (_currentSwipeDirection == SwipeDirection.Left)
+        {
+            PlayerAnimator.SetTrigger("EndLeft");
+            _currentSwipeDirection = SwipeDirection.None;
+        }
+        else if (_currentSwipeDirection == SwipeDirection.Right)
+        {
+            PlayerAnimator.SetTrigger("EndRight");
+            _currentSwipeDirection = SwipeDirection.None;
+        }
         yield return new WaitForSeconds(seconds);
         PlayerCharacter.ReturnToNormal();
         _fingerPushed = false;
@@ -59,8 +71,7 @@ public class SwipeDetector : MonoBehaviour
                 {
                     Debug.Log("Should detect swipe");
                     _fingerDownPosition = touch.position;
-                    if (touch.phase == TouchPhase.Moved)
-                        DetectSwipe();
+                    DetectSwipe();
                     break;
                 }
                 else
@@ -79,6 +90,16 @@ public class SwipeDetector : MonoBehaviour
     private void DetectSwipe()
     {
         SwipeDirection direction = _fingerDownPosition.x - _fingerUpPosition.x > 0 ? SwipeDirection.Right : SwipeDirection.Left;
+        if (direction == SwipeDirection.Left)
+        {
+            _currentSwipeDirection = SwipeDirection.Left;
+            PlayerAnimator.SetTrigger("StartLeft");
+        }
+        else if (direction == SwipeDirection.Right)
+        {
+            _currentSwipeDirection = SwipeDirection.Right;
+            PlayerAnimator.SetTrigger("StartRight");
+        }
         Debug.Log("Swipe dirrection: " + direction);
         SendSwipe(direction);
         _fingerUpPosition = _fingerDownPosition;
@@ -106,6 +127,7 @@ public struct SwipeData
 
 public enum SwipeDirection
 {
+    None,
     Left,
     Right,
 }
