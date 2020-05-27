@@ -477,6 +477,7 @@ GameObject:
   - component: {fileID: 216197871}
   - component: {fileID: 216197873}
   - component: {fileID: 216197872}
+  - component: {fileID: 216197874}
   m_Layer: 0
   m_Name: Model
   m_TagString: Player
@@ -545,6 +546,25 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 216197870}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!95 &216197874
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 216197870}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 017bce9f3078dcb4393412581a966dd1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &223974226
 GameObject:
   m_ObjectHideFlags: 0
@@ -1059,7 +1079,7 @@ PrefabInstance:
     - target: {fileID: 8893906298777877777, guid: 27460b5e41820d446af3f036397c4d36,
         type: 3}
       propertyPath: m_Size.x
-      value: 0.2
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27460b5e41820d446af3f036397c4d36, type: 3}
@@ -1283,7 +1303,7 @@ PrefabInstance:
     - target: {fileID: 8893906298777877777, guid: 27460b5e41820d446af3f036397c4d36,
         type: 3}
       propertyPath: m_Size.x
-      value: 0.2
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27460b5e41820d446af3f036397c4d36, type: 3}
@@ -1942,7 +1962,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1959175504}
-  - component: {fileID: 1959175501}
   - component: {fileID: 1959175506}
   - component: {fileID: 1959175507}
   m_Layer: 0
@@ -1952,19 +1971,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!65 &1959175501
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1959175500}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &1959175504
 Transform:
   m_ObjectHideFlags: 0
@@ -2094,7 +2100,7 @@ PrefabInstance:
     - target: {fileID: 8893906298777877777, guid: 27460b5e41820d446af3f036397c4d36,
         type: 3}
       propertyPath: m_Size.x
-      value: 0.2
+      value: 0.1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27460b5e41820d446af3f036397c4d36, type: 3}
@@ -2171,6 +2177,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a53ed6d693f20c64493df1db315758f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PlayerAnimator: {fileID: 216197874}
   SwipeTimeFrame: 0.3
   PlayerCharacter: {fileID: 731826894}
 --- !u!1 &2120349027
