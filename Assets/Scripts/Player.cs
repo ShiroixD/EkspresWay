@@ -13,7 +13,6 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        Input.multiTouchEnabled = false;
         _startingPos = transform.position;
         _startingRot = transform.rotation;
     }
@@ -30,11 +29,13 @@ public class Player : MonoBehaviour
         if (data.Direction == SwipeDirection.Left)
         {
             Physics.transform.position = new Vector3(_startingPos.x - 0.4f, _startingPos.y, _startingPos.z);
+            Model.transform.position = new Vector3(_startingPos.x - 0.4f, _startingPos.y, _startingPos.z);
             Model.transform.rotation = new Quaternion(_startingRot.x, _startingRot.y + 70.0f, _startingRot.z, _startingRot.w);
         }
         else if (data.Direction == SwipeDirection.Right)
         {
             Physics.transform.position = new Vector3(_startingPos.x + 0.4f, _startingPos.y, _startingPos.z);
+            Model.transform.position = new Vector3(_startingPos.x + 0.4f, _startingPos.y, _startingPos.z);
             Model.transform.rotation = new Quaternion(_startingRot.x, _startingRot.y - 70.0f, _startingRot.z, _startingRot.w);
 
         }
@@ -43,6 +44,7 @@ public class Player : MonoBehaviour
     public void ReturnToNormal()
     {
         Physics.transform.position = new Vector3(_startingPos.x, _startingPos.y, _startingPos.z);
+        Model.transform.position = new Vector3(_startingPos.x, _startingPos.y, _startingPos.z);
         Model.transform.rotation = new Quaternion(_startingRot.x, _startingRot.y, _startingRot.z, _startingRot.w);
     }
 }

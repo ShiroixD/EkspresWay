@@ -1056,6 +1056,11 @@ PrefabInstance:
       propertyPath: m_IsTrigger
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8893906298777877777, guid: 27460b5e41820d446af3f036397c4d36,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 0.2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27460b5e41820d446af3f036397c4d36, type: 3}
 --- !u!1 &705507993
@@ -1275,6 +1280,11 @@ PrefabInstance:
       propertyPath: m_IsTrigger
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8893906298777877777, guid: 27460b5e41820d446af3f036397c4d36,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 0.2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27460b5e41820d446af3f036397c4d36, type: 3}
 --- !u!1 &963194225
@@ -1448,6 +1458,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsTrigger
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8893906298777877777, guid: 27460b5e41820d446af3f036397c4d36,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 0.2
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27460b5e41820d446af3f036397c4d36, type: 3}
@@ -2076,6 +2091,11 @@ PrefabInstance:
       propertyPath: m_IsTrigger
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 8893906298777877777, guid: 27460b5e41820d446af3f036397c4d36,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 0.2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 27460b5e41820d446af3f036397c4d36, type: 3}
 --- !u!1 &2062205275
@@ -2124,7 +2144,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ObstacleTimeGenerator: 0
-  ObstacleArea: {fileID: 0}
   ObstaclesObjects: []
 --- !u!114 &2062205278
 MonoBehaviour:
@@ -2152,9 +2171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a53ed6d693f20c64493df1db315758f5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DetectSwipeOnlyAfterRelease: 0
-  MinDistanceForSwipe: 10
-  SwipeTimeFrame: 0.1
+  SwipeTimeFrame: 0.2
   PlayerCharacter: {fileID: 731826894}
 --- !u!1 &2120349027
 GameObject:
