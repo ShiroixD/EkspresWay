@@ -6,7 +6,6 @@ public class GameManager : MonoBehaviour
 {
 
     public double ObstacleTimeGenerator;
-    public GameObject ObstacleArea;
     public Obstacle[] ObstaclesObjects;
     private int _pointsCounter;
 
