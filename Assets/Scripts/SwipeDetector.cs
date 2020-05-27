@@ -21,35 +21,44 @@ public class SwipeDetector : MonoBehaviour
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
-            if (touch.phase == TouchPhase.Began)
+
+            if (touch.phase == TouchPhase.Began && !_fingerPushed)
             {
+                _fingerUpPosition = touch.position;
+                _fingerDownPosition = touch.position;
+                _fingerPushed = true;
                 StartCoroutine(SwipeTimer());
             }
 
             if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
             {
-                _fingerPushed = false;
-                PlayerCharacter.ReturnToNormal();
+                Debug.Log("Should return to normal");
+                StartCoroutine(ReturnToNormalState(SwipeTimeFrame));
             }
         }    
+    }
+
+    private IEnumerator ReturnToNormalState(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        PlayerCharacter.ReturnToNormal();
+        _fingerPushed = false;
     }
 
     private IEnumerator SwipeTimer()
     {
         if (Input.touchCount > 0)
         {
-            Touch touch = Input.GetTouch(0);
-            _fingerUpPosition = touch.position;
-            _fingerDownPosition = touch.position;
-            _fingerPushed = true;
+            Debug.Log("Started swipe timer");
             float currentFrameTime = 0;
 
             while (_fingerPushed && Input.touchCount > 0)
             {
+                Touch touch = Input.touches[Input.touchCount - 1];
                 if (currentFrameTime >= SwipeTimeFrame)
                 {
+                    Debug.Log("Should detect swipe");
                     _fingerDownPosition = touch.position;
-                    _fingerPushed = false;
                     if (touch.phase == TouchPhase.Moved)
                         DetectSwipe();
                     break;
@@ -61,6 +70,7 @@ public class SwipeDetector : MonoBehaviour
 
                 yield return new WaitForSeconds(0);
             }
+            Debug.Log("Finished swipe timer");
         }
 
         yield return new WaitForSeconds(0);
@@ -69,6 +79,7 @@ public class SwipeDetector : MonoBehaviour
     private void DetectSwipe()
     {
         SwipeDirection direction = _fingerDownPosition.x - _fingerUpPosition.x > 0 ? SwipeDirection.Right : SwipeDirection.Left;
+        Debug.Log("Swipe dirrection: " + direction);
         SendSwipe(direction);
         _fingerUpPosition = _fingerDownPosition;
     }
@@ -81,6 +92,7 @@ public class SwipeDetector : MonoBehaviour
             StartPosition = _fingerDownPosition,
             EndPosition = _fingerUpPosition
         };
+        Debug.Log("Should swipe to: " + swipeData.Direction);
         PlayerCharacter.TiltToSide(swipeData);
     }
 }

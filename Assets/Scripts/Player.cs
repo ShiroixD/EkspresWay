@@ -43,6 +43,7 @@ public class Player : MonoBehaviour
 
     public void ReturnToNormal()
     {
+        Debug.Log("Returning to normal");
         Physics.transform.position = new Vector3(_startingPos.x, _startingPos.y, _startingPos.z);
         Model.transform.position = new Vector3(_startingPos.x, _startingPos.y, _startingPos.z);
         Model.transform.rotation = new Quaternion(_startingRot.x, _startingRot.y, _startingRot.z, _startingRot.w);
