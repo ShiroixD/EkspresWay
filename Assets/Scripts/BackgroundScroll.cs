@@ -4,29 +4,29 @@ using UnityEngine;
 
 public class BackgroundScroll : MonoBehaviour
 {
-    public float ScrollSpeed = 5f;
     public float DistanceLimit = 34f;
-    public GameObject Player;
+    private GameManager _gameManager;
     private Vector3 _startPos;
 
-    void Start()
+    void Awake()
     {
+        _gameManager = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
         _startPos = transform.position;
     }
 
     void Update()
     {
         float myPosY = transform.position.y;
-        float playerPosY = Player.transform.position.y;
+        float playerPosY = _gameManager.Player.transform.position.y;
 
         if (myPosY < playerPosY && Mathf.Abs(myPosY - playerPosY) > DistanceLimit)
         {
             transform.position = new Vector3(transform.position.x, transform.position.y + 3 * DistanceLimit, transform.position.z);
         }
 
-        transform.position = new Vector3(transform.position.x, transform.position.y - Time.deltaTime * ScrollSpeed, transform.position.z);
+        transform.position = new Vector3(transform.position.x, transform.position.y - Time.deltaTime * _gameManager.getScrollSpeed(), transform.position.z);
 
-        float newPos = Mathf.Repeat(Time.time * ScrollSpeed, 35);
+        float newPos = Mathf.Repeat(Time.time * _gameManager.getScrollSpeed(), 35);
         transform.position = _startPos + Vector3.down * newPos;
     }
 }

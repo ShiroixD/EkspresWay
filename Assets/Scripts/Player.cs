@@ -8,8 +8,11 @@ public class Player : MonoBehaviour
     public GameObject Model;
     public GameObject Physics;
     public SwipeDetector SwipeDetector;
+    public bool obstacleLockFlag;
     private Vector3 _startingPos;
     private Quaternion _startingRot;
+    public GameManager GameManager;
+
 
     void Start()
     {

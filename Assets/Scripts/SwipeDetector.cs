@@ -12,6 +12,7 @@ public class SwipeDetector : MonoBehaviour
     public Animator PlayerAnimator;
     public float SwipeTimeFrame = 0.1f;
     public Player PlayerCharacter;
+    private int _inputCountTouch= 0;
 
     void Start()
     {
@@ -23,19 +24,33 @@ public class SwipeDetector : MonoBehaviour
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
-
-            if (touch.phase == TouchPhase.Began && !_fingerPushed)
+            if (!PlayerCharacter.obstacleLockFlag)
             {
-                _fingerUpPosition = touch.position;
-                _fingerDownPosition = touch.position;
-                _fingerPushed = true;
-                StartCoroutine(SwipeTimer());
+                if (touch.phase == TouchPhase.Began && !_fingerPushed)
+                {
+                    _fingerUpPosition = touch.position;
+                    _fingerDownPosition = touch.position;
+                    _fingerPushed = true;
+                    StartCoroutine(SwipeTimer());
+                }
+
+                if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
+                {
+                    Debug.Log("Should return to normal");
+                    StartCoroutine(ReturnToNormalState(SwipeTimeFrame));
+                }
             }
-
-            if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
+            else
             {
-                Debug.Log("Should return to normal");
-                StartCoroutine(ReturnToNormalState(SwipeTimeFrame));
+                
+                if (touch.phase == TouchPhase.Began)
+                  _inputCountTouch++;
+                if (_inputCountTouch >= 10)
+                {
+                    PlayerCharacter.obstacleLockFlag = false;
+                    _inputCountTouch = 0;
+                    PlayerCharacter.GameManager.setScrollSpeed(PlayerCharacter.GameManager.StartingScrollSpeed);
+                }
             }
         }    
     }
