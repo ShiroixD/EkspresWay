@@ -5,19 +5,20 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-    public GameObject Model;
-    public GameObject Physics;
-    public SwipeDetector SwipeDetector;
-    public bool obstacleLockFlag;
-    private Vector3 _startingPos;
-    private Quaternion _startingRot;
-    public GameManager GameManager;
+    public bool IsStunned { get; set; }
+    public GameObject CurrentHitObstacle { get; set; }
 
+    [SerializeField] private GameObject _model;
+    [SerializeField] private SwipeDetector _swipeDetector;
+    [SerializeField] private GameManager _gameManager;
+    private Vector3 _startingPos;
+    private Animator _animator;
 
     void Start()
     {
         _startingPos = transform.position;
-        _startingRot = transform.rotation;
+        IsStunned = false;
+        _animator = _model.GetComponent<Animator>();
     }
 
     void Update()
@@ -31,11 +32,11 @@ public class Player : MonoBehaviour
 
         if (data.Direction == SwipeDirection.Left)
         {
-            Physics.transform.position = new Vector3(_startingPos.x - 1f, _startingPos.y, _startingPos.z);
+            transform.position = new Vector3(_startingPos.x - 1f, _startingPos.y, _startingPos.z);
         }
         else if (data.Direction == SwipeDirection.Right)
         {
-            Physics.transform.position = new Vector3(_startingPos.x + 1f, _startingPos.y, _startingPos.z);
+            transform.position = new Vector3(_startingPos.x + 1f, _startingPos.y, _startingPos.z);
 
         }
     }
@@ -43,8 +44,34 @@ public class Player : MonoBehaviour
     public void ReturnToNormal()
     {
         Debug.Log("Returning to normal");
-        Physics.transform.position = new Vector3(_startingPos.x, _startingPos.y, _startingPos.z);
-        //Model.transform.position = new Vector3(_startingPos.x, _startingPos.y, _startingPos.z);
-        //Model.transform.rotation = new Quaternion(_startingRot.x, _startingRot.y, _startingRot.z, _startingRot.w);
+        transform.position = new Vector3(_startingPos.x, _startingPos.y, _startingPos.z);
+    }
+
+    public void PlayAnimation(string triggerName)
+    {
+        _animator.SetTrigger(triggerName);
+    }
+
+    private void OnTriggerEnter(Collider collision)
+    {
+        switch (collision.gameObject.tag)
+        {
+            case "Teeth":
+                {
+                    _gameManager.PointsCounter += 1;
+                    break;
+                }
+            case "Tooth":
+                {
+                    break;
+                }
+            case "Thread":
+                {
+                    _gameManager.ScrollSpeed = 0;
+                    IsStunned = true;
+                    CurrentHitObstacle = collision.gameObject;
+                    break;
+                }
+        }
     }
 }

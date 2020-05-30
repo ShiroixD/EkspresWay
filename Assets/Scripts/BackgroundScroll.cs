@@ -4,29 +4,29 @@ using UnityEngine;
 
 public class BackgroundScroll : MonoBehaviour
 {
-    public float DistanceLimit = 34f;
+    [SerializeField] private GameObject _playerObject;
+    [SerializeField] private float _distanceLimitToMoveUp = 34f;
     private GameManager _gameManager;
-    private Vector3 _startPos;
+    private Vector3 _startPosition;
 
     void Awake()
     {
         _gameManager = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
-        _startPos = transform.position;
+        _startPosition = transform.position;
     }
 
     void Update()
     {
         float myPosY = transform.position.y;
-        float playerPosY = _gameManager.Player.transform.position.y;
+        float playerPosY = _playerObject.transform.position.y;
 
-        if (myPosY < playerPosY && Mathf.Abs(myPosY - playerPosY) > DistanceLimit)
+        if (myPosY < playerPosY && Mathf.Abs(myPosY - playerPosY) > _distanceLimitToMoveUp)
         {
-            transform.position = new Vector3(transform.position.x, transform.position.y + 3 * DistanceLimit, transform.position.z);
+            transform.position = new Vector3(transform.position.x, transform.position.y + 3 * _distanceLimitToMoveUp, transform.position.z);
         }
 
-        transform.position = new Vector3(transform.position.x, transform.position.y - Time.deltaTime * _gameManager.getScrollSpeed(), transform.position.z);
-
-        float newPos = Mathf.Repeat(Time.time * _gameManager.getScrollSpeed(), 35);
-        transform.position = _startPos + Vector3.down * newPos;
+        transform.position = new Vector3(transform.position.x, transform.position.y - Time.deltaTime * _gameManager.ScrollSpeed, transform.position.z);
+        float newPos = Mathf.Repeat(Time.time * _gameManager.ScrollSpeed, 35);
+        transform.position = _startPosition + Vector3.down * newPos;
     }
 }

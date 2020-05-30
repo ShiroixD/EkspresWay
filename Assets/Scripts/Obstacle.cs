@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class Obstacle : MonoBehaviour
 {
-    public float DinstanceToReplace = 10;
-    public float NewPositionOffset = 20f;
+    [SerializeField] private float _dinstanceToReplace = 10;
+    [SerializeField] private float _newPositionOffset = 20f;
     private GameManager _gameManager;
 
     void Start()
@@ -15,44 +15,26 @@ public class Obstacle : MonoBehaviour
 
     void Update()
     {
-        if (transform.position.y < -DinstanceToReplace)
+        if (transform.position.y < -_dinstanceToReplace)
         {
-            transform.position = new Vector3(transform.position.x, transform.position.y + NewPositionOffset, transform.position.z);
+            transform.position = new Vector3(transform.position.x, transform.position.y + _newPositionOffset, transform.position.z);
         }
-        transform.position = new Vector3(transform.position.x, transform.position.y - Time.deltaTime * _gameManager.getScrollSpeed(), transform.position.z);
+        transform.position = new Vector3(transform.position.x, transform.position.y - Time.deltaTime * _gameManager.ScrollSpeed, transform.position.z);
     }
 
-
-    private void OnTriggerEnter(Collider collision)
+    public void Disappear()
     {
-        if (collision.gameObject.tag == "Player")
-        {
-            switch (gameObject.tag)
-            {
-                case "Teeth":
-                    {
-                        _gameManager.IncreasePoints(1);
-                        transform.position = new Vector3(transform.position.x, transform.position.y + NewPositionOffset, transform.position.z);
-                        break;
-                    }
-                case "Tooth":
-                    {
-                        transform.position = new Vector3(transform.position.x, transform.position.y + NewPositionOffset, transform.position.z);
-                        break;
-                    }
-                case "Thread":
-                    {
-                        _gameManager.setScrollSpeed(0);
-                        _gameManager.Player.GetComponent<Player>().obstacleLockFlag = true;
-                        break;
-                    }
+        Destroy(gameObject);
+    }
 
+    private void OnTriggerEnter(Collider collider)
+    {
+        if (collider.gameObject.tag == "Player")
+        {
+            if (gameObject.tag != "Thread")
+            {
+                transform.position = new Vector3(transform.position.x, transform.position.y + _newPositionOffset, transform.position.z);
             }
         }
-    }
-
-    private void OnTriggerStay(Collider other)
-    {
-        
     }
 }

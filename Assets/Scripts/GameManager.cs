@@ -4,29 +4,18 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public float ScrollSpeed { get; set; }
+    public int PointsCounter { get => _pointsCounter; set => _pointsCounter += value; }
 
-    public double ObstacleTimeGenerator;
-    public Obstacle[] ObstaclesObjects;
+    [SerializeField] private float _startSpeed = 5f;
+    [SerializeField] private float _speedLimit = 10f;
+    [SerializeField] private Player _player;
     private int _pointsCounter;
-    private float _scrollSpeed;
-    public float StartingScrollSpeed = 5f;
-    public GameObject Player;
-
-
-    public float getScrollSpeed()
-    {
-        return _scrollSpeed;
-    }
-
-    public void setScrollSpeed(float value)
-    {
-        _scrollSpeed = value;
-    }
 
     void Start()
     {
         _pointsCounter = 0;
-        _scrollSpeed = StartingScrollSpeed;
+        ScrollSpeed = _startSpeed;
     }
 
     void Update()
@@ -36,16 +25,12 @@ public class GameManager : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if(!Player.GetComponent<Player>().obstacleLockFlag)
-            _scrollSpeed += 0.001f;
-    }
-    public int GetCurrentPoints()
-    {
-        return _pointsCounter;
+        if(!_player.IsStunned && _startSpeed < _speedLimit)
+            ScrollSpeed += 0.001f;
     }
 
-    public void IncreasePoints(int points)
+    public void RestartSpeed()
     {
-        _pointsCounter += points;
+        ScrollSpeed = _startSpeed;
     }
 }

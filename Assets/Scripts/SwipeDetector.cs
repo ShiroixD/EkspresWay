@@ -5,13 +5,14 @@ using UnityEngine;
 
 public class SwipeDetector : MonoBehaviour
 {
+    [SerializeField] private GameManager _gameManager;
+    [SerializeField] private Player _player;
+    [SerializeField] private float _delayToReadSwipe;
+    [SerializeField] private float _delayToReturnCenterPosition = 0.1f;
     private Vector2 _fingerDownPosition;
     private Vector2 _fingerUpPosition;
     private bool _fingerPushed = false;
     private SwipeDirection _currentSwipeDirection = SwipeDirection.None;
-    public Animator PlayerAnimator;
-    public float SwipeTimeFrame = 0.1f;
-    public Player PlayerCharacter;
     private int _inputCountTouch= 0;
 
     void Start()
@@ -21,10 +22,11 @@ public class SwipeDetector : MonoBehaviour
 
     void Update()
     {
+        #if UNITY_ANDROID || UNITY_IOS
         if (Input.touchCount > 0)
         {
             Touch touch = Input.GetTouch(0);
-            if (!PlayerCharacter.obstacleLockFlag)
+            if (!_player.IsStunned)
             {
                 if (touch.phase == TouchPhase.Began && !_fingerPushed)
                 {
@@ -37,69 +39,116 @@ public class SwipeDetector : MonoBehaviour
                 if (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled)
                 {
                     Debug.Log("Should return to normal");
-                    StartCoroutine(ReturnToNormalState(SwipeTimeFrame));
+                    StartCoroutine(ReturnToNormalState(_delayToReturnCenterPosition));
                 }
             }
             else
             {
-                
                 if (touch.phase == TouchPhase.Began)
-                  _inputCountTouch++;
+                    _inputCountTouch++;
+
                 if (_inputCountTouch >= 10)
                 {
-                    PlayerCharacter.obstacleLockFlag = false;
+                    _player.IsStunned = false;
                     _inputCountTouch = 0;
-                    PlayerCharacter.GameManager.setScrollSpeed(PlayerCharacter.GameManager.StartingScrollSpeed);
+                    if (_player.CurrentHitObstacle != null)
+                    {
+                        _player.CurrentHitObstacle.GetComponent<Obstacle>().Disappear();
+                        _player.CurrentHitObstacle = null;
+                    }
+                    _gameManager.RestartSpeed();
                 }
             }
-        }    
+        }
+        #elif UNITY_EDITOR
+        if (!_player.IsStunned)
+        {
+            if (Input.GetMouseButtonDown(0) && !_fingerPushed)
+            {
+                _fingerUpPosition = Input.mousePosition;
+                _fingerDownPosition = Input.mousePosition;
+                _fingerPushed = true;
+                StartCoroutine(SwipeTimer());
+            }
+
+            if (Input.GetMouseButtonUp(0))
+            {
+                Debug.Log("Should return to normal");
+                StartCoroutine(ReturnToNormalState(_delayToReturnCenterPosition));
+            }
+        }
+        else
+        {
+            if (Input.GetMouseButtonDown(0))
+                _inputCountTouch++;
+
+            if (_inputCountTouch >= 10)
+            {
+                _player.IsStunned = false;
+                _inputCountTouch = 0;
+                if (_player.CurrentHitObstacle != null)
+                {
+                    _player.CurrentHitObstacle.GetComponent<Obstacle>().Disappear();
+                    _player.CurrentHitObstacle = null;
+                }
+                _gameManager.RestartSpeed();
+            }
+        }
+        #endif
+    }
+
+    private IEnumerator SwipeTimer()
+    {
+        Debug.Log("Started swipe timer");
+        float currentFrameTime = 0;
+
+        #if UNITY_ANDROID || UNITY_IOS
+        while (_fingerPushed && Input.touchCount > 0)
+        #elif UNITY_EDITOR
+        while (_fingerPushed && Input.GetMouseButtonDown(0))
+        #endif
+        {
+            if (currentFrameTime >= _delayToReadSwipe)
+            {
+                Debug.Log("Should detect swipe");
+
+                    #if UNITY_ANDROID || UNITY_IOS
+                    Touch touch = Input.touches[Input.touchCount - 1];
+                    _fingerDownPosition = touch.position;
+                    #elif UNITY_EDITOR
+                    _fingerDownPosition = Input.mousePosition;
+                    #endif
+
+                DetectSwipe();
+                break;
+            }
+            else
+            {
+                currentFrameTime += Time.deltaTime;
+            }
+
+            yield return null;
+        }
+
+        Debug.Log("Finished swipe timer");
+        yield return null;
     }
 
     private IEnumerator ReturnToNormalState(float seconds)
     {
         if (_currentSwipeDirection == SwipeDirection.Left)
         {
-            PlayerAnimator.SetTrigger("EndLeft");
-            _currentSwipeDirection = SwipeDirection.None;
+            _player.PlayAnimation("EndLeft");
         }
         else if (_currentSwipeDirection == SwipeDirection.Right)
         {
-            PlayerAnimator.SetTrigger("EndRight");
-            _currentSwipeDirection = SwipeDirection.None;
+            _player.PlayAnimation("EndRight");
         }
+
+        _currentSwipeDirection = SwipeDirection.None;
         yield return new WaitForSeconds(seconds);
-        PlayerCharacter.ReturnToNormal();
+        _player.ReturnToNormal();
         _fingerPushed = false;
-    }
-
-    private IEnumerator SwipeTimer()
-    {
-        if (Input.touchCount > 0)
-        {
-            Debug.Log("Started swipe timer");
-            float currentFrameTime = 0;
-
-            while (_fingerPushed && Input.touchCount > 0)
-            {
-                Touch touch = Input.touches[Input.touchCount - 1];
-                if (currentFrameTime >= SwipeTimeFrame)
-                {
-                    Debug.Log("Should detect swipe");
-                    _fingerDownPosition = touch.position;
-                    DetectSwipe();
-                    break;
-                }
-                else
-                {
-                    currentFrameTime += Time.deltaTime;
-                }
-
-                yield return new WaitForSeconds(0);
-            }
-            Debug.Log("Finished swipe timer");
-        }
-
-        yield return new WaitForSeconds(0);
     }
 
     private void DetectSwipe()
@@ -107,13 +156,17 @@ public class SwipeDetector : MonoBehaviour
         SwipeDirection direction = _fingerDownPosition.x - _fingerUpPosition.x > 0 ? SwipeDirection.Right : SwipeDirection.Left;
         if (direction == SwipeDirection.Left)
         {
+            _player.PlayAnimation("StartLeft");
             _currentSwipeDirection = SwipeDirection.Left;
-            PlayerAnimator.SetTrigger("StartLeft");
         }
         else if (direction == SwipeDirection.Right)
         {
+            _player.PlayAnimation("StartRight");
             _currentSwipeDirection = SwipeDirection.Right;
-            PlayerAnimator.SetTrigger("StartRight");
+        }
+        else
+        {
+            _currentSwipeDirection = SwipeDirection.None;
         }
         Debug.Log("Swipe dirrection: " + direction);
         SendSwipe(direction);
@@ -129,7 +182,7 @@ public class SwipeDetector : MonoBehaviour
             EndPosition = _fingerUpPosition
         };
         Debug.Log("Should swipe to: " + swipeData.Direction);
-        PlayerCharacter.TiltToSide(swipeData);
+        _player.TiltToSide(swipeData);
     }
 }
 
