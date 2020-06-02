@@ -17,27 +17,14 @@ public class Obstacle : MonoBehaviour
     {
         if (_gameManager.GameState == GameState.IN_PROGRESS)
         {
-            if (transform.position.y < -_dinstanceToReplace)
-            {
-                transform.position = new Vector3(transform.position.x, transform.position.y + _newPositionOffset, transform.position.z);
-            }
             transform.position = new Vector3(transform.position.x, transform.position.y - Time.deltaTime * _gameManager.ScrollSpeed, transform.position.z);
+            if (transform.position.y <= -7.0f)
+                Disappear();
         }
     }
 
     public void Disappear()
     {
         Destroy(gameObject);
-    }
-
-    private void OnTriggerEnter(Collider collider)
-    {
-        if (collider.gameObject.tag == "Player")
-        {
-            if (gameObject.tag != "Thread")
-            {
-                transform.position = new Vector3(transform.position.x, transform.position.y + _newPositionOffset, transform.position.z);
-            }
-        }
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class GameManager : MonoBehaviour
 {
@@ -13,10 +14,13 @@ public class GameManager : MonoBehaviour
     [SerializeField] private UiManager _uiManager;
     [SerializeField] private GameObject _playerObject;
     [SerializeField] private GameObject _obstacles;
+    [SerializeField] private GameObject _obstaclesSpawnPoint;
+    [SerializeField] private GameObject[] _obstaclesObjectArray;
+    [SerializeField] [Range(0.0f, 1.0f)] private float _obstaclesPercentage;
     [SerializeField] private float _startSpeed = 5f;
     [SerializeField] private float _speedLimit = 10f;
     [SerializeField] private float _timeLimitMin = 1;
-    private Player _player;
+    [SerializeField] private Player _player;
     private float _currentTime;
 
     private GameState _gameState;
@@ -64,8 +68,8 @@ public class GameManager : MonoBehaviour
         _uiManager.HideStartUi();
         _uiManager.ShowInGameUi();
         _playerObject.SetActive(true);
-        _player = GameObject.FindWithTag("Player").GetComponent<Player>();
-        _obstacles.SetActive(true);
+            _obstacles.SetActive(true);
+        StartCoroutine(GenerateMap());
     }
 
     public void GameOver()
@@ -85,7 +89,80 @@ public class GameManager : MonoBehaviour
         _uiManager.HideGameOverUi();
         _currentTime = _timeLimitMin * 60.0f;
         _uiManager.SetRemainingTime(_currentTime);
+        StartCoroutine(GenerateMap());
 
+    }
+
+
+    public IEnumerator GenerateMap()
+    {
+        UnityEngine.Random random = new UnityEngine.Random();
+        Vector3 spawnPosition = _obstaclesSpawnPoint.transform.position;
+        float breakPercent = _obstaclesPercentage + (1 - _obstaclesPercentage) / 2;
+
+        while (_gameState == GameState.IN_PROGRESS)
+        {
+            if (!_player.IsStunned)
+            {
+                float percent = UnityEngine.Random.Range(0.0f, 1.0f);
+                if (percent < _obstaclesPercentage)
+                {
+                    GameObject newObscatles = GameObject.Instantiate(_obstaclesObjectArray[0]);
+                    newObscatles.transform.position = spawnPosition;
+                    newObscatles.transform.SetParent(_obstacles.transform);
+                }
+                else if (percent >= _obstaclesPercentage && percent < breakPercent)
+                {
+                    float side = UnityEngine.Random.Range(0.0f, 1.0f);
+                    if (side < 0.5f)
+                    {
+                        GameObject leftNewObscatles = GameObject.Instantiate(_obstaclesObjectArray[1]);
+                        leftNewObscatles.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
+                        leftNewObscatles.transform.SetParent(_obstacles.transform);
+
+                        GameObject RightNewObscatles = GameObject.Instantiate(_obstaclesObjectArray[2]);
+                        RightNewObscatles.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
+                        RightNewObscatles.transform.SetParent(_obstacles.transform);
+                    }
+                    else
+                    {
+                        GameObject leftNewObscatles = GameObject.Instantiate(_obstaclesObjectArray[1]);
+                        leftNewObscatles.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
+                        leftNewObscatles.transform.SetParent(_obstacles.transform);
+
+                        GameObject RightNewObscatles = GameObject.Instantiate(_obstaclesObjectArray[2]);
+                        RightNewObscatles.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
+                        RightNewObscatles.transform.SetParent(_obstacles.transform);
+                    }
+                }
+                else
+                {
+                    float side = UnityEngine.Random.Range(0.0f, 1.0f);
+                    if (side < 0.5f)
+                    {
+                        GameObject leftNewObscatles = GameObject.Instantiate(_obstaclesObjectArray[1]);
+                        leftNewObscatles.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
+                        leftNewObscatles.transform.SetParent(_obstacles.transform);
+
+                        GameObject RightNewObscatles = GameObject.Instantiate(_obstaclesObjectArray[3]);
+                        RightNewObscatles.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
+                        RightNewObscatles.transform.SetParent(_obstacles.transform);
+                    }
+                    else
+                    {
+                        GameObject leftNewObscatles = GameObject.Instantiate(_obstaclesObjectArray[1]);
+                        leftNewObscatles.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
+                        leftNewObscatles.transform.SetParent(_obstacles.transform);
+
+                        GameObject RightNewObscatles = GameObject.Instantiate(_obstaclesObjectArray[3]);
+                        RightNewObscatles.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
+                        RightNewObscatles.transform.SetParent(_obstacles.transform);
+                    }
+                }
+                yield return new WaitForSecondsRealtime(0.3f);
+            }
+        }
+        yield return null;
     }
 }
 

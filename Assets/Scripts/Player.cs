@@ -23,6 +23,7 @@ public class Player : MonoBehaviour
 
     void Update()
     {
+        Debug.Log(IsStunned);
     }
 
     public void TiltToSide(SwipeData data)
