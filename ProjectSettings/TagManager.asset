@@ -10,6 +10,8 @@ TagManager:
   - MaterialBreak
   - MaterialObstacle
   - Background
+  - Thread
+  - TimeBonus
   layers:
   - Default
   - TransparentFX

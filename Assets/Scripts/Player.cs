@@ -73,7 +73,13 @@ public class Player : MonoBehaviour
                 }
             case "MaterialBreak":
                 {
+                    Destroy(collision.gameObject);
                     _gameManager.GameOver();
+                    break;
+                }
+            case "TimeBonus":
+                {
+                    _gameManager.RemainingTime += 5.0f;
                     break;
                 }
         }

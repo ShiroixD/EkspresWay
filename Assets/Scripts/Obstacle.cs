@@ -4,8 +4,6 @@ using UnityEngine;
 
 public class Obstacle : MonoBehaviour
 {
-    [SerializeField] private float _dinstanceToReplace = 10;
-    [SerializeField] private float _newPositionOffset = 20f;
     private GameManager _gameManager;
 
     void Start()

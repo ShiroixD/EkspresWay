@@ -8,7 +8,7 @@ public class GameManager : MonoBehaviour
 {
     public float ScrollSpeed { get; set; }
     public long PointsCounter { get => _pointsCounter; set => _pointsCounter = value; }
-    public float RemainingTime { get; set; }
+    public float RemainingTime { get => _currentTime; set => _currentTime = value; }
     public GameState GameState { get => _gameState; set => _gameState = value; }
 
     [SerializeField] private UiManager _uiManager;
@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float _timeLimitMin = 1;
     [SerializeField] private Player _player;
     private float _currentTime;
+    private int _combo = 0;
 
     private GameState _gameState;
     private long _pointsCounter;
@@ -42,6 +43,11 @@ public class GameManager : MonoBehaviour
         {
             _currentTime -= Time.deltaTime;
             _uiManager.SetRemainingTime(_currentTime);
+            if (_currentTime == 0)
+            {
+                _gameState = GameState.COMPLETED;
+                GameOver();
+             }
         }
         else
             _uiManager.SetRemainingTime(0);
@@ -60,6 +66,8 @@ public class GameManager : MonoBehaviour
     public void RestartSpeed()
     {
         ScrollSpeed = _startSpeed;
+        _combo = 0;
+
     }
 
     public void StartGame()
@@ -76,15 +84,20 @@ public class GameManager : MonoBehaviour
     {
         this.ScrollSpeed = 0.0f;
         _gameState = GameState.GAME_OVER;
+        _obstacles.SetActive(false);
         _uiManager.ShowGameOverUi();
         _uiManager.HideInGameUi();
+        _combo = 0;
+
     }
 
     public void RetryGame()
     {
         this.ScrollSpeed = _startSpeed;
         this._pointsCounter = 0;
+        _combo = 0;
         _gameState = GameState.IN_PROGRESS;
+        _obstacles.SetActive(true);
         _uiManager.ShowInGameUi();
         _uiManager.HideGameOverUi();
         _currentTime = _timeLimitMin * 60.0f;
@@ -98,67 +111,82 @@ public class GameManager : MonoBehaviour
     {
         UnityEngine.Random random = new UnityEngine.Random();
         Vector3 spawnPosition = _obstaclesSpawnPoint.transform.position;
-        float breakPercent = _obstaclesPercentage + (1 - _obstaclesPercentage) / 2;
+        float breakPercent = _obstaclesPercentage + 3 * ((1 - _obstaclesPercentage) / 4) ;
 
         while (_gameState == GameState.IN_PROGRESS && !_player.IsStunned)
         {
 
-                float percent = UnityEngine.Random.Range(0.0f, 1.0f);
-                if (percent < _obstaclesPercentage)
+        float percent = UnityEngine.Random.Range(0.0f, 1.0f);
+        if (percent < _obstaclesPercentage)
+        {
+            GameObject teeth = GameObject.Instantiate(_obstaclesObjectArray[0]);
+            teeth.transform.position = spawnPosition;
+            teeth.transform.SetParent(_obstacles.transform);
+            _combo++;
+            if (_combo >= 20)
+            {
+                float side = UnityEngine.Random.Range(0.0f, 1.0f);
+                GameObject timeBonus = GameObject.Instantiate(_obstaclesObjectArray[4]);
+                if (side < 0.5f)
                 {
-                    GameObject newObscatles = GameObject.Instantiate(_obstaclesObjectArray[0]);
-                    newObscatles.transform.position = spawnPosition;
-                    newObscatles.transform.SetParent(_obstacles.transform);
-                }
-                else if (percent >= _obstaclesPercentage && percent < breakPercent)
-                {
-                    float side = UnityEngine.Random.Range(0.0f, 1.0f);
-                    if (side < 0.5f)
-                    {
-                        GameObject leftNewObscatles = GameObject.Instantiate(_obstaclesObjectArray[1]);
-                        leftNewObscatles.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
-                        leftNewObscatles.transform.SetParent(_obstacles.transform);
-
-                        GameObject RightNewObscatles = GameObject.Instantiate(_obstaclesObjectArray[2]);
-                        RightNewObscatles.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
-                        RightNewObscatles.transform.SetParent(_obstacles.transform);
-                    }
-                    else
-                    {
-                        GameObject leftNewObscatles = GameObject.Instantiate(_obstaclesObjectArray[1]);
-                        leftNewObscatles.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
-                        leftNewObscatles.transform.SetParent(_obstacles.transform);
-
-                        GameObject RightNewObscatles = GameObject.Instantiate(_obstaclesObjectArray[2]);
-                        RightNewObscatles.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
-                        RightNewObscatles.transform.SetParent(_obstacles.transform);
-                    }
+                    timeBonus.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z); ;
+                    timeBonus.transform.SetParent(_obstacles.transform);
                 }
                 else
                 {
-                    float side = UnityEngine.Random.Range(0.0f, 1.0f);
-                    if (side < 0.5f)
-                    {
-                        GameObject leftNewObscatles = GameObject.Instantiate(_obstaclesObjectArray[1]);
-                        leftNewObscatles.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
-                        leftNewObscatles.transform.SetParent(_obstacles.transform);
-
-                        GameObject RightNewObscatles = GameObject.Instantiate(_obstaclesObjectArray[3]);
-                        RightNewObscatles.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
-                        RightNewObscatles.transform.SetParent(_obstacles.transform);
-                    }
-                    else
-                    {
-                        GameObject leftNewObscatles = GameObject.Instantiate(_obstaclesObjectArray[1]);
-                        leftNewObscatles.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
-                        leftNewObscatles.transform.SetParent(_obstacles.transform);
-
-                        GameObject RightNewObscatles = GameObject.Instantiate(_obstaclesObjectArray[3]);
-                        RightNewObscatles.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
-                        RightNewObscatles.transform.SetParent(_obstacles.transform);
-                    }
+                    timeBonus.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z); ;
+                    timeBonus.transform.SetParent(_obstacles.transform);
                 }
-                yield return new WaitForSecondsRealtime(0.3f);
+                _combo = 0;
+            }
+        }
+        else if (percent >= _obstaclesPercentage && percent < breakPercent)
+        {
+            float side = UnityEngine.Random.Range(0.0f, 1.0f);
+            GameObject tooth = GameObject.Instantiate(_obstaclesObjectArray[1]);
+            GameObject thread = GameObject.Instantiate(_obstaclesObjectArray[2]);
+            if (side < 0.5f)
+            {
+                tooth.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
+                tooth.transform.SetParent(_obstacles.transform);
+
+                thread.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
+                thread.transform.SetParent(_obstacles.transform);
+            }
+            else
+            {
+                tooth.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
+                tooth.transform.SetParent(_obstacles.transform);
+
+                thread.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
+                thread.transform.SetParent(_obstacles.transform);
+            }
+        }
+        else
+        {
+            float side = UnityEngine.Random.Range(0.0f, 1.0f);
+            GameObject tooth = GameObject.Instantiate(_obstaclesObjectArray[1]);
+            GameObject materialBreak = GameObject.Instantiate(_obstaclesObjectArray[3]);
+
+
+            if (side < 0.5f)
+                {
+                    tooth.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
+                    tooth.transform.SetParent(_obstacles.transform);
+
+                    materialBreak.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
+                    materialBreak.transform.SetParent(_obstacles.transform);
+                }
+                else
+                {
+                    tooth.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
+                    tooth.transform.SetParent(_obstacles.transform);
+
+                    materialBreak.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
+                    materialBreak.transform.SetParent(_obstacles.transform);
+                }
+            }
+            yield return new WaitForSecondsRealtime(0.3f);
         }
         yield return null;
     }
