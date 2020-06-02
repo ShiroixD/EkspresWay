@@ -15,11 +15,14 @@ public class Obstacle : MonoBehaviour
 
     void Update()
     {
-        if (transform.position.y < -_dinstanceToReplace)
+        if (_gameManager.GameState == GameState.IN_PROGRESS)
         {
-            transform.position = new Vector3(transform.position.x, transform.position.y + _newPositionOffset, transform.position.z);
+            if (transform.position.y < -_dinstanceToReplace)
+            {
+                transform.position = new Vector3(transform.position.x, transform.position.y + _newPositionOffset, transform.position.z);
+            }
+            transform.position = new Vector3(transform.position.x, transform.position.y - Time.deltaTime * _gameManager.ScrollSpeed, transform.position.z);
         }
-        transform.position = new Vector3(transform.position.x, transform.position.y - Time.deltaTime * _gameManager.ScrollSpeed, transform.position.z);
     }
 
     public void Disappear()

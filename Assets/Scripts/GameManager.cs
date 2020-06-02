@@ -6,8 +6,9 @@ using UnityEngine;
 public class GameManager : MonoBehaviour
 {
     public float ScrollSpeed { get; set; }
-    public int PointsCounter { get => _pointsCounter; set => _pointsCounter += value; }
+    public long PointsCounter { get => _pointsCounter; set => _pointsCounter = value; }
     public float RemainingTime { get; set; }
+    public GameState GameState { get => _gameState; set => _gameState = value; }
 
     [SerializeField] private UiManager _uiManager;
     [SerializeField] private GameObject _playerObject;
@@ -19,7 +20,7 @@ public class GameManager : MonoBehaviour
     private float _currentTime;
 
     private GameState _gameState;
-    private int _pointsCounter;
+    private long _pointsCounter;
 
     void Start()
     {

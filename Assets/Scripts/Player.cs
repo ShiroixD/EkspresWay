@@ -23,7 +23,6 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        
     }
 
     public void TiltToSide(SwipeData data)
