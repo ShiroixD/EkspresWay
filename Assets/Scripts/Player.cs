@@ -66,9 +66,9 @@ public class Player : MonoBehaviour
                 }
             case "Thread":
                 {
-                    _gameManager.ScrollSpeed = 0;
                     IsStunned = true;
                     CurrentHitObstacle = collision.gameObject;
+                    _gameManager.PlayerWasStunned();
                     break;
                 }
             case "MaterialBreak":

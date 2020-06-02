@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour
 {
     public float ScrollSpeed { get; set; }
     public long PointsCounter { get => _pointsCounter; set => _pointsCounter = value; }
+    public int AntiStunTapCounter { get; set; } = -1;
     public float RemainingTime { get => _currentTime; set => _currentTime = value; }
     public GameState GameState { get => _gameState; set => _gameState = value; }
 
@@ -16,6 +17,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private GameObject _obstacles;
     [SerializeField] private GameObject _obstaclesSpawnPoint;
     [SerializeField] private GameObject[] _obstaclesObjectArray;
+    [SerializeField] private SwipeDetector _swipeDetector;
     [SerializeField] [Range(0.0f, 1.0f)] private float _obstaclesPercentage;
     [SerializeField] private float _startSpeed = 5f;
     [SerializeField] private float _speedLimit = 10f;
@@ -65,9 +67,9 @@ public class GameManager : MonoBehaviour
 
     public void RestartSpeed()
     {
+        _uiManager.HideAntiStunButton();
         ScrollSpeed = _startSpeed;
         _combo = 0;
-
     }
 
     public void StartGame()
@@ -83,12 +85,13 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         this.ScrollSpeed = 0.0f;
+        AntiStunTapCounter = -1;
         _gameState = GameState.GAME_OVER;
         _obstacles.SetActive(false);
         _uiManager.ShowGameOverUi();
         _uiManager.HideInGameUi();
+        _player.transform.parent.gameObject.SetActive(false);
         _combo = 0;
-
     }
 
     public void RetryGame()
@@ -102,6 +105,7 @@ public class GameManager : MonoBehaviour
         _uiManager.HideGameOverUi();
         _currentTime = _timeLimitMin * 60.0f;
         _uiManager.SetRemainingTime(_currentTime);
+        _player.transform.parent.gameObject.SetActive(true);
         StartCoroutine(GenerateMap());
 
     }
@@ -189,6 +193,18 @@ public class GameManager : MonoBehaviour
             yield return new WaitForSecondsRealtime(0.3f);
         }
         yield return null;
+    }
+
+    public void DecreaseAntiStunTapCounter()
+    {
+        AntiStunTapCounter--;
+    }
+
+    public void PlayerWasStunned()
+    {
+        ScrollSpeed = 0;
+        AntiStunTapCounter = 10;
+        _uiManager.ShowAntiStunButton();
     }
 }
 
