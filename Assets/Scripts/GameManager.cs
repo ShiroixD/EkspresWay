@@ -100,10 +100,9 @@ public class GameManager : MonoBehaviour
         Vector3 spawnPosition = _obstaclesSpawnPoint.transform.position;
         float breakPercent = _obstaclesPercentage + (1 - _obstaclesPercentage) / 2;
 
-        while (_gameState == GameState.IN_PROGRESS)
+        while (_gameState == GameState.IN_PROGRESS && !_player.IsStunned)
         {
-            if (!_player.IsStunned)
-            {
+
                 float percent = UnityEngine.Random.Range(0.0f, 1.0f);
                 if (percent < _obstaclesPercentage)
                 {
@@ -160,7 +159,6 @@ public class GameManager : MonoBehaviour
                     }
                 }
                 yield return new WaitForSecondsRealtime(0.3f);
-            }
         }
         yield return null;
     }

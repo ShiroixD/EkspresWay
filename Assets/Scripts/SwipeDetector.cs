@@ -57,6 +57,7 @@ public class SwipeDetector : MonoBehaviour
                         _player.CurrentHitObstacle = null;
                     }
                     _gameManager.RestartSpeed();
+                    StartCoroutine(_gameManager.GenerateMap());
                 }
             }
         }
