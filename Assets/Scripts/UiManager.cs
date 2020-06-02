@@ -49,6 +49,13 @@ public class UiManager : MonoBehaviour
         _remainingTimeText.gameObject.SetActive(false);
     }
 
+    public void HideGameOverUi()
+    {
+        _gameOverIcon.gameObject.SetActive(false);
+        _retryButtonIcon.gameObject.SetActive(false);
+    }
+
+
     public void ShowGameOverUi()
     {
         _gameOverIcon.gameObject.SetActive(true);

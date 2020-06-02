@@ -71,6 +71,11 @@ public class Player : MonoBehaviour
                     CurrentHitObstacle = collision.gameObject;
                     break;
                 }
+            case "MaterialBreak":
+                {
+                    _gameManager.GameOver();
+                    break;
+                }
         }
     }
 }

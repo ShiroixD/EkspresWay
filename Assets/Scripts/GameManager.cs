@@ -70,9 +70,25 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
+        this.ScrollSpeed = 0.0f;
+        _gameState = GameState.GAME_OVER;
+        _uiManager.ShowGameOverUi();
+        _uiManager.HideInGameUi();
+    }
+
+    public void RetryGame()
+    {
+        this.ScrollSpeed = _startSpeed;
+        this._pointsCounter = 0;
+        _gameState = GameState.IN_PROGRESS;
+        _uiManager.ShowInGameUi();
+        _uiManager.HideGameOverUi();
+        _currentTime = _timeLimitMin * 60.0f;
+        _uiManager.SetRemainingTime(_currentTime);
 
     }
 }
+
 
 public enum GameState
 {
