@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float _startSpeed = 5f;
     [SerializeField] private float _speedLimit = 10f;
     [SerializeField] private float _timeLimitMin = 1;
+    [SerializeField] private int _obsatcleGap=5;
     [SerializeField] private Player _player;
     private float _currentTime;
     private int _combo = 0;
@@ -116,12 +117,13 @@ public class GameManager : MonoBehaviour
         UnityEngine.Random random = new UnityEngine.Random();
         Vector3 spawnPosition = _obstaclesSpawnPoint.transform.position;
         float breakPercent = _obstaclesPercentage + 3 * ((1 - _obstaclesPercentage) / 4) ;
+        int obstacleInt = 0;
 
         while (_gameState == GameState.IN_PROGRESS && !_player.IsStunned)
         {
 
         float percent = UnityEngine.Random.Range(0.0f, 1.0f);
-        if (percent < _obstaclesPercentage)
+        if (percent < _obstaclesPercentage  || obstacleInt < _obsatcleGap)
         {
             GameObject teeth = GameObject.Instantiate(_obstaclesObjectArray[0]);
             teeth.transform.position = spawnPosition;
@@ -143,6 +145,7 @@ public class GameManager : MonoBehaviour
                 }
                 _combo = 0;
             }
+                obstacleInt++;
         }
         else if (percent >= _obstaclesPercentage && percent < breakPercent)
         {
@@ -165,6 +168,7 @@ public class GameManager : MonoBehaviour
                 thread.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
                 thread.transform.SetParent(_obstacles.transform);
             }
+                obstacleInt = 0;
         }
         else
         {
@@ -189,6 +193,7 @@ public class GameManager : MonoBehaviour
                     materialBreak.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
                     materialBreak.transform.SetParent(_obstacles.transform);
                 }
+                obstacleInt = 0;
             }
             yield return new WaitForSecondsRealtime(0.3f);
         }
