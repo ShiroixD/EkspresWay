@@ -13,7 +13,6 @@ public class SwipeDetector : MonoBehaviour
     private Vector2 _fingerUpPosition;
     private bool _fingerPushed = false;
     private SwipeDirection _currentSwipeDirection = SwipeDirection.None;
-    private int _inputCountTouch= 0;
 
     void Start()
     {
@@ -44,13 +43,10 @@ public class SwipeDetector : MonoBehaviour
             }
             else
             {
-                if (touch.phase == TouchPhase.Began)
-                    _inputCountTouch++;
-
-                if (_inputCountTouch >= 10)
+                if (_gameManager.AntiStunTapCounter == 0)
                 {
                     _player.IsStunned = false;
-                    _inputCountTouch = 0;
+                    _gameManager.AntiStunTapCounter = -1;
                     if (_player.CurrentHitObstacle != null)
                     {
                         _player.CurrentHitObstacle.GetComponent<Obstacle>().Disappear();
@@ -61,7 +57,7 @@ public class SwipeDetector : MonoBehaviour
                 }
             }
         }
-        #elif UNITY_EDITOR
+#elif UNITY_EDITOR
         if (!_player.IsStunned)
         {
             if (Input.GetMouseButtonDown(0) && !_fingerPushed)
@@ -80,13 +76,10 @@ public class SwipeDetector : MonoBehaviour
         }
         else
         {
-            if (Input.GetMouseButtonDown(0))
-                _inputCountTouch++;
-
-            if (_inputCountTouch >= 10)
+            if (_gameManager.AntiStunTapCounter >= 10)
             {
                 _player.IsStunned = false;
-                _inputCountTouch = 0;
+                _gameManager.AntiStunTapCounter = -1;
                 if (_player.CurrentHitObstacle != null)
                 {
                     _player.CurrentHitObstacle.GetComponent<Obstacle>().Disappear();
@@ -95,7 +88,7 @@ public class SwipeDetector : MonoBehaviour
                 _gameManager.RestartSpeed();
             }
         }
-        #endif
+#endif
     }
 
     private IEnumerator SwipeTimer()
