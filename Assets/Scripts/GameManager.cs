@@ -22,7 +22,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float _startSpeed = 5f;
     [SerializeField] private float _speedLimit = 10f;
     [SerializeField] private float _timeLimitMin = 1;
-    [SerializeField] private int _obsatcleGap=5;
+    [SerializeField] private int _obsatcleGap = 5;
     [SerializeField] private Player _player;
     private float _currentTime;
     private int _combo = 0;
@@ -42,15 +42,14 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
-        if (_gameState == GameState.IN_PROGRESS &&_currentTime > 0)
+        if (_gameState == GameState.IN_PROGRESS && _currentTime > 0)
         {
             _currentTime -= Time.deltaTime;
             _uiManager.SetRemainingTime(_currentTime);
             if (_currentTime == 0)
             {
-                _gameState = GameState.COMPLETED;
-                GameOver();
-             }
+                TimeOut();
+            }
         }
         else
             _uiManager.SetRemainingTime(0);
@@ -79,8 +78,20 @@ public class GameManager : MonoBehaviour
         _uiManager.HideStartUi();
         _uiManager.ShowInGameUi();
         _playerObject.SetActive(true);
-            _obstacles.SetActive(true);
+        _obstacles.SetActive(true);
         StartCoroutine(GenerateMap());
+    }
+
+    public void TimeOut()
+    {
+        this.ScrollSpeed = 0.0f;
+        AntiStunTapCounter = -1;
+        _gameState = GameState.COMPLETED;
+        _obstacles.SetActive(false);
+        _uiManager.ShowGameOverUi();
+        _uiManager.HideInGameUi();
+        _player.transform.parent.gameObject.SetActive(false);
+        _combo = 0;
     }
 
     public void GameOver()
