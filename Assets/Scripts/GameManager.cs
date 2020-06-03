@@ -46,7 +46,7 @@ public class GameManager : MonoBehaviour
         {
             _currentTime -= Time.deltaTime;
             _uiManager.SetRemainingTime(_currentTime);
-            if (_currentTime == 0)
+            if (_currentTime <= 0)
             {
                 TimeOut();
             }

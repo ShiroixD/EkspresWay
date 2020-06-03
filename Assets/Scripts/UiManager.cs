@@ -14,6 +14,7 @@ public class UiManager : MonoBehaviour
     [SerializeField] private Image _retryButtonIcon;
     [SerializeField] private Image _gameOverIcon;
     [SerializeField] private Image _successIcon;
+    [SerializeField] private TextMeshProUGUI _result;
 
     void Start()
     {
@@ -54,15 +55,31 @@ public class UiManager : MonoBehaviour
         _remainingTimeText.transform.parent.gameObject.SetActive(false);
     }
 
-    public void HideGameOverUi()
+
+    public void HideTimeOutUi()
     {
         _gameOverIcon.gameObject.SetActive(false);
         _retryButtonIcon.gameObject.SetActive(false);
     }
 
+    public void ShowTimeOutUi()
+    {
+        _gameOverIcon.gameObject.SetActive(true);
+        _retryButtonIcon.gameObject.SetActive(true);
+    }
+
+
+    public void HideGameOverUi()
+    {
+        _result.transform.parent.gameObject.SetActive(false);
+        _gameOverIcon.gameObject.SetActive(false);
+        _retryButtonIcon.gameObject.SetActive(false);
+    }
 
     public void ShowGameOverUi()
     {
+        _result.text = _pointsText.text;
+        _result.transform.parent.gameObject.SetActive(true);
         _gameOverIcon.gameObject.SetActive(true);
         _retryButtonIcon.gameObject.SetActive(true);
     }
