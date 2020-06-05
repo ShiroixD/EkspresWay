@@ -58,6 +58,7 @@ public class Player : MonoBehaviour
             case "Teeth":
                 {
                     _gameManager.PointsCounter += 1;
+                    collision.gameObject.GetComponent<Animation>().Play("zip"); 
                     break;
                 }
             case "Tooth":

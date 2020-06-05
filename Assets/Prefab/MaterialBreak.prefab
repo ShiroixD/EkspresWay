@@ -93,8 +93,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 71e5e7b8d6ac4b54b8f23c0f38a8c59a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _dinstanceToReplace: 10
-  _newPositionOffset: 20
 --- !u!65 &5801006016896102320
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -103,7 +101,7 @@ BoxCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2803252809315670418}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}

@@ -1298,6 +1298,11 @@ PrefabInstance:
       propertyPath: m_LocalPosition.x
       value: 1.2
       objectReference: {fileID: 0}
+    - target: {fileID: 702960755219996459, guid: 27460b5e41820d446af3f036397c4d36,
+        type: 3}
+      propertyPath: m_Animations.Array.size
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2676128465849498205, guid: 27460b5e41820d446af3f036397c4d36,
         type: 3}
       propertyPath: NewPositionOffset
@@ -1318,7 +1323,8 @@ PrefabInstance:
       propertyPath: m_Size.z
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7064933752419348815, guid: 27460b5e41820d446af3f036397c4d36, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 27460b5e41820d446af3f036397c4d36, type: 3}
 --- !u!1 &705507993
 GameObject:
