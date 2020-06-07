@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private float _startSpeed = 5f;
     [SerializeField] private float _speedLimit = 10f;
     [SerializeField] private float _timeLimitMin = 1;
+    [SerializeField] private float _speedDelta = 0.001f;
     [SerializeField] private int _obsatcleGap = 5;
     [SerializeField] private Player _player;
     private float _currentTime;
@@ -61,7 +62,7 @@ public class GameManager : MonoBehaviour
         if (_player != null)
         {
             if (!_player.IsStunned && _startSpeed < _speedLimit)
-                ScrollSpeed += 0.001f;
+                ScrollSpeed += _speedDelta;
         }
     }
 

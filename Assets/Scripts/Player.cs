@@ -81,6 +81,7 @@ public class Player : MonoBehaviour
             case "TimeBonus":
                 {
                     _gameManager.RemainingTime += 5.0f;
+                    Destroy(collision.gameObject);
                     break;
                 }
         }
