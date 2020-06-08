@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public int AntiStunTapCounter { get; set; } = -1;
     public float RemainingTime { get => _currentTime; set => _currentTime = value; }
     public GameState GameState { get => _gameState; set => _gameState = value; }
+    public Player Player { get => _player; set => _player = value; }
 
     [SerializeField] private UiManager _uiManager;
     [SerializeField] private GameObject _playerObject;
@@ -215,6 +216,8 @@ public class GameManager : MonoBehaviour
     public void DecreaseAntiStunTapCounter()
     {
         AntiStunTapCounter--;
+       _player.PlayAnimation("Shake");
+
     }
 
     public void PlayerWasStunned()
