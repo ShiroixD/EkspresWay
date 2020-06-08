@@ -222,6 +222,7 @@ public class GameManager : MonoBehaviour
 
     public void PlayerWasStunned()
     {
+        GameObject.Find("Main Camera").GetComponent<Animation>().Play("Camera");
         ScrollSpeed = 0;
         AntiStunTapCounter = 10;
         _uiManager.ShowAntiStunButton();
