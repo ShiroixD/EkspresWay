@@ -45,6 +45,8 @@ public class SwipeDetector : MonoBehaviour
             {
                 if (_gameManager.AntiStunTapCounter == 0)
                 {
+                    this.GetComponent<AudioSource>().clip = _gameManager.MusicManager.Sfx[0];
+                    this.GetComponent<AudioSource>().Play();
                     _player.IsStunned = false;
                     _gameManager.AntiStunTapCounter = -1;
                     if (_player.CurrentHitObstacle != null)

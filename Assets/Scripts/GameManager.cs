@@ -12,8 +12,10 @@ public class GameManager : MonoBehaviour
     public float RemainingTime { get => _currentTime; set => _currentTime = value; }
     public GameState GameState { get => _gameState; set => _gameState = value; }
     public Player Player { get => _player; set => _player = value; }
+    public MusicManager MusicManager { get => _musicManager; set => _musicManager = value; }
 
     [SerializeField] private UiManager _uiManager;
+    [SerializeField] private MusicManager _musicManager;
     [SerializeField] private GameObject _playerObject;
     [SerializeField] private GameObject _obstacles;
     [SerializeField] private GameObject _obstaclesSpawnPoint;
@@ -98,6 +100,9 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
+        _musicManager.GetComponent<AudioSource>().clip = _musicManager.GameOverClip;
+        _musicManager.GetComponent<AudioSource>().Play();
+
         this.ScrollSpeed = 0.0f;
         AntiStunTapCounter = -1;
         _gameState = GameState.GAME_OVER;
@@ -110,6 +115,7 @@ public class GameManager : MonoBehaviour
 
     public void RetryGame()
     {
+        _musicManager.RandomBackgroundMusciPlay();
         this.ScrollSpeed = _startSpeed;
         this._pointsCounter = 0;
         _combo = 0;
@@ -215,9 +221,10 @@ public class GameManager : MonoBehaviour
 
     public void DecreaseAntiStunTapCounter()
     {
-        AntiStunTapCounter--;
-       _player.PlayAnimation("Shake");
-
+         AntiStunTapCounter--;
+        _player.PlayAnimation("Shake");
+        _player.GetComponent<AudioSource>().clip = _musicManager.Sfx[1];
+        _player.GetComponent<AudioSource>().Play();
     }
 
     public void PlayerWasStunned()
