@@ -5,10 +5,18 @@ using UnityEngine;
 
 public class SwipeDetector : MonoBehaviour
 {
-    [SerializeField] private GameManager _gameManager;
-    [SerializeField] private Player _player;
-    [SerializeField] private float _delayToReadSwipe;
-    [SerializeField] private float _delayToReturnCenterPosition = 0.1f;
+    [SerializeField]
+    private GameManager _gameManager;
+
+    [SerializeField]
+    private Player _player;
+
+    [SerializeField]
+    private float _delayToReadSwipe = 0.3f;
+
+    [SerializeField]
+    private float _delayToReturnCenterPosition = 0.3f;
+
     private Vector2 _fingerDownPosition;
     private Vector2 _fingerUpPosition;
     private bool _fingerPushed = false;
@@ -41,25 +49,8 @@ public class SwipeDetector : MonoBehaviour
                     StartCoroutine(ReturnToNormalState(_delayToReturnCenterPosition));
                 }
             }
-            else
-            {
-                if (_gameManager.AntiStunTapCounter == 0)
-                {
-                    this.GetComponent<AudioSource>().clip = _gameManager.MusicManager.Sfx[0];
-                    this.GetComponent<AudioSource>().Play();
-                    _player.IsStunned = false;
-                    _gameManager.AntiStunTapCounter = -1;
-                    if (_player.CurrentHitObstacle != null)
-                    {
-                        _player.CurrentHitObstacle.GetComponent<Obstacle>().Disappear();
-                        _player.CurrentHitObstacle = null;
-                    }
-                    _gameManager.RestartSpeed();
-                    StartCoroutine(_gameManager.GenerateMap());
-                }
-            }
         }
-#elif UNITY_EDITOR
+        #elif UNITY_EDITOR
         if (!_player.IsStunned)
         {
             if (Input.GetMouseButtonDown(0) && !_fingerPushed)
@@ -76,21 +67,7 @@ public class SwipeDetector : MonoBehaviour
                 StartCoroutine(ReturnToNormalState(_delayToReturnCenterPosition));
             }
         }
-        else
-        {
-            if (_gameManager.AntiStunTapCounter >= 10)
-            {
-                _player.IsStunned = false;
-                _gameManager.AntiStunTapCounter = -1;
-                if (_player.CurrentHitObstacle != null)
-                {
-                    _player.CurrentHitObstacle.GetComponent<Obstacle>().Disappear();
-                    _player.CurrentHitObstacle = null;
-                }
-                _gameManager.RestartSpeed();
-            }
-        }
-#endif
+        #endif
     }
 
     private IEnumerator SwipeTimer()

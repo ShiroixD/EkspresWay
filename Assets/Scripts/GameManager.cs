@@ -6,28 +6,57 @@ using UnityEngine.EventSystems;
 
 public class GameManager : MonoBehaviour
 {
-    public float ScrollSpeed { get; set; }
+    public float Speed { get => _currentSpeed; set => _currentSpeed = value; }
     public long PointsCounter { get => _pointsCounter; set => _pointsCounter = value; }
     public int AntiStunTapCounter { get; set; } = -1;
     public float RemainingTime { get => _currentTime; set => _currentTime = value; }
     public GameState GameState { get => _gameState; set => _gameState = value; }
     public Player Player { get => _player; set => _player = value; }
     public MusicManager MusicManager { get => _musicManager; set => _musicManager = value; }
+    public int Combo { get => _combo; set => _combo = value; }
 
-    [SerializeField] private UiManager _uiManager;
-    [SerializeField] private MusicManager _musicManager;
-    [SerializeField] private GameObject _playerObject;
-    [SerializeField] private GameObject _obstacles;
-    [SerializeField] private GameObject _obstaclesSpawnPoint;
-    [SerializeField] private GameObject[] _obstaclesObjectArray;
-    [SerializeField] private SwipeDetector _swipeDetector;
-    [SerializeField] [Range(0.0f, 1.0f)] private float _obstaclesPercentage;
-    [SerializeField] private float _startSpeed = 5f;
-    [SerializeField] private float _speedLimit = 10f;
-    [SerializeField] private float _timeLimitMin = 1;
-    [SerializeField] private float _speedDelta = 0.001f;
-    [SerializeField] private int _obsatcleGap = 5;
-    [SerializeField] private Player _player;
+    [SerializeField]
+    private Camera _camera;
+
+    [SerializeField]
+    private UiManager _uiManager;
+
+    [SerializeField]
+    private MusicManager _musicManager;
+
+    [SerializeField]
+    private MapGenerator _mapGenerator;
+
+    [SerializeField]
+    private GameObject _playerObject;
+
+    [SerializeField]
+    private GameObject _obstacles;
+
+    [SerializeField]
+    private SwipeDetector _swipeDetector;
+
+    [SerializeField]
+    private float _startSpeed = 5f;
+
+    [SerializeField]
+    private float _speedLimit = 10f;
+
+    [SerializeField]
+    private float _currentSpeed = 0f;
+
+    [SerializeField]
+    private float _timeLimitMin = 1;
+
+    [SerializeField]
+    private float _speedDelta = 0.5f;
+
+    [SerializeField]
+    private float _raiseSpeedInterval = 15.0f;
+
+    [SerializeField]
+    private Player _player;
+
     private float _currentTime;
     private int _combo = 0;
 
@@ -37,7 +66,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         _pointsCounter = 0;
-        ScrollSpeed = _startSpeed;
+        _currentSpeed = _startSpeed;
         _gameState = GameState.MENU;
         _uiManager.ShowStartUi();
         _currentTime = _timeLimitMin * 60.0f;
@@ -54,25 +83,46 @@ public class GameManager : MonoBehaviour
             {
                 TimeOut();
             }
+            if (AntiStunTapCounter == 0)
+            {
+                AntiStunTapCounter = -1;
+                AudioSource audioSource = _player.GetComponent<AudioSource>();
+                _musicManager.PlaySourceWithClip(audioSource, "stunRelease");
+                _player.IsStunned = false;
+                if (_player.CurrentHitObstacle != null)
+                {
+                    _player.CurrentHitObstacle.GetComponent<Obstacle>().Disappear();
+                    _player.CurrentHitObstacle = null;
+                }
+                RestartSpeed();
+                _mapGenerator.StartGenerating();
+            }
         }
         else
             _uiManager.SetRemainingTime(0);
     }
 
-
-    private void FixedUpdate()
+    private IEnumerator RaiseSpeed(float time)
     {
-        if (_player != null)
+        while (_gameState == GameState.IN_PROGRESS)
         {
-            if (!_player.IsStunned && _startSpeed < _speedLimit)
-                ScrollSpeed += _speedDelta;
+            yield return new WaitForSecondsRealtime(time);
+            if (_gameState != GameState.IN_PROGRESS)
+                break;
+            while (_player.IsStunned)
+                yield return null;
+            if (_player != null)
+            {
+                if (_currentSpeed < _speedLimit)
+                    _currentSpeed += _speedDelta;
+            }
         }
     }
 
     public void RestartSpeed()
     {
         _uiManager.HideAntiStunButton();
-        ScrollSpeed = _startSpeed;
+        _currentSpeed = _startSpeed;
         _combo = 0;
     }
 
@@ -83,12 +133,13 @@ public class GameManager : MonoBehaviour
         _uiManager.ShowInGameUi();
         _playerObject.SetActive(true);
         _obstacles.SetActive(true);
-        StartCoroutine(GenerateMap());
+        _mapGenerator.StartGenerating();
+        StartCoroutine(RaiseSpeed(_raiseSpeedInterval));
     }
 
     public void TimeOut()
     {
-        this.ScrollSpeed = 0.0f;
+        _currentSpeed = 0.0f;
         AntiStunTapCounter = -1;
         _gameState = GameState.COMPLETED;
         _obstacles.SetActive(false);
@@ -100,10 +151,8 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
-        _musicManager.GetComponent<AudioSource>().clip = _musicManager.GameOverClip;
-        _musicManager.GetComponent<AudioSource>().Play();
-
-        this.ScrollSpeed = 0.0f;
+        _musicManager.PlayGameOverMusic();
+        _currentSpeed = 0.0f;
         AntiStunTapCounter = -1;
         _gameState = GameState.GAME_OVER;
         _obstacles.SetActive(false);
@@ -115,9 +164,9 @@ public class GameManager : MonoBehaviour
 
     public void RetryGame()
     {
-        _musicManager.RandomBackgroundMusciPlay();
-        this.ScrollSpeed = _startSpeed;
-        this._pointsCounter = 0;
+        _musicManager.PlayRandomBackgroundMusic();
+        _currentSpeed = _startSpeed;
+        _pointsCounter = 0;
         _combo = 0;
         _gameState = GameState.IN_PROGRESS;
         _obstacles.SetActive(true);
@@ -126,116 +175,27 @@ public class GameManager : MonoBehaviour
         _currentTime = _timeLimitMin * 60.0f;
         _uiManager.SetRemainingTime(_currentTime);
         _player.transform.parent.gameObject.SetActive(true);
-        StartCoroutine(GenerateMap());
-
+        _mapGenerator.StartGenerating();
+        StartCoroutine(RaiseSpeed(_raiseSpeedInterval));
     }
 
-
-    public IEnumerator GenerateMap()
-    {
-        UnityEngine.Random random = new UnityEngine.Random();
-        Vector3 spawnPosition = _obstaclesSpawnPoint.transform.position;
-        float breakPercent = _obstaclesPercentage + 3 * ((1 - _obstaclesPercentage) / 4) ;
-        int obstacleInt = 0;
-
-        while (_gameState == GameState.IN_PROGRESS && !_player.IsStunned)
-        {
-
-        float percent = UnityEngine.Random.Range(0.0f, 1.0f);
-        if (percent < _obstaclesPercentage  || obstacleInt < _obsatcleGap)
-        {
-            GameObject teeth = GameObject.Instantiate(_obstaclesObjectArray[0]);
-            teeth.transform.position = spawnPosition;
-            teeth.transform.SetParent(_obstacles.transform);
-            _combo++;
-            if (_combo >= 20)
-            {
-                float side = UnityEngine.Random.Range(0.0f, 1.0f);
-                GameObject timeBonus = GameObject.Instantiate(_obstaclesObjectArray[4]);
-                if (side < 0.5f)
-                {
-                    timeBonus.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z); ;
-                    timeBonus.transform.SetParent(_obstacles.transform);
-                }
-                else
-                {
-                    timeBonus.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z); ;
-                    timeBonus.transform.SetParent(_obstacles.transform);
-                }
-                _combo = 0;
-            }
-                obstacleInt++;
-        }
-        else if (percent >= _obstaclesPercentage && percent < breakPercent)
-        {
-            float side = UnityEngine.Random.Range(0.0f, 1.0f);
-            GameObject tooth = GameObject.Instantiate(_obstaclesObjectArray[1]);
-            GameObject thread = GameObject.Instantiate(_obstaclesObjectArray[2]);
-            if (side < 0.5f)
-            {
-                tooth.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
-                tooth.transform.SetParent(_obstacles.transform);
-
-                thread.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
-                thread.transform.SetParent(_obstacles.transform);
-            }
-            else
-            {
-                tooth.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
-                tooth.transform.SetParent(_obstacles.transform);
-
-                thread.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
-                thread.transform.SetParent(_obstacles.transform);
-            }
-                obstacleInt = 0;
-        }
-        else
-        {
-            float side = UnityEngine.Random.Range(0.0f, 1.0f);
-            GameObject tooth = GameObject.Instantiate(_obstaclesObjectArray[1]);
-            GameObject materialBreak = GameObject.Instantiate(_obstaclesObjectArray[3]);
-
-
-            if (side < 0.5f)
-                {
-                    tooth.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
-                    tooth.transform.SetParent(_obstacles.transform);
-
-                    materialBreak.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
-                    materialBreak.transform.SetParent(_obstacles.transform);
-                }
-                else
-                {
-                    tooth.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
-                    tooth.transform.SetParent(_obstacles.transform);
-
-                    materialBreak.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
-                    materialBreak.transform.SetParent(_obstacles.transform);
-                }
-                obstacleInt = 0;
-            }
-            yield return new WaitForSecondsRealtime(0.3f);
-        }
-        yield return null;
-    }
 
     public void DecreaseAntiStunTapCounter()
     {
-         AntiStunTapCounter--;
+        AudioSource playerAudioSource = _player.GetComponent<AudioSource>();
+        _musicManager.PlaySourceWithClip(playerAudioSource, "decreaseStun");
         _player.PlayAnimation("Shake");
-        _player.GetComponent<AudioSource>().clip = _musicManager.Sfx[1];
-        _player.GetComponent<AudioSource>().Play();
+        AntiStunTapCounter--;
     }
 
     public void PlayerWasStunned()
     {
-        GameObject.Find("Main Camera").GetComponent<Animation>().Play("Camera");
-        ScrollSpeed = 0;
-        AntiStunTapCounter = 10;
+        _camera.GetComponent<Animation>().Play("Camera");
+        _currentSpeed = 0;
         _uiManager.ShowAntiStunButton();
+        AntiStunTapCounter = 10;
     }
 }
-
 
 public enum GameState
 {

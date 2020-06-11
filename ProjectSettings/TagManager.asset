@@ -12,6 +12,7 @@ TagManager:
   - Background
   - Thread
   - TimeBonus
+  - MusicManager
   layers:
   - Default
   - TransparentFX

@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class BackgroundScroll : MonoBehaviour
 {
-    [SerializeField] private GameObject _playerObject;
-    [SerializeField] private float _distanceLimitToMoveUp = 34f;
+    [SerializeField]
+    private GameObject _playerObject;
+
+    [SerializeField]
+    private float _distanceLimitToMoveUp = 34f;
+
     private GameManager _gameManager;
     private Vector3 _startPosition;
 
@@ -25,8 +29,8 @@ public class BackgroundScroll : MonoBehaviour
             transform.position = new Vector3(transform.position.x, transform.position.y + 3 * _distanceLimitToMoveUp, transform.position.z);
         }
 
-        transform.position = new Vector3(transform.position.x, transform.position.y - Time.deltaTime * _gameManager.ScrollSpeed, transform.position.z);
-        float newPos = Mathf.Repeat(Time.time * _gameManager.ScrollSpeed, 35);
+        transform.position = new Vector3(transform.position.x, transform.position.y - Time.deltaTime * _gameManager.Speed, transform.position.z);
+        float newPos = Mathf.Repeat(Time.time * _gameManager.Speed, 35);
         transform.position = _startPosition + Vector3.down * newPos;
     }
 }

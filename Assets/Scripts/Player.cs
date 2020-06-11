@@ -8,9 +8,15 @@ public class Player : MonoBehaviour
     public bool IsStunned { get; set; }
     public GameObject CurrentHitObstacle { get; set; }
 
-    [SerializeField] private GameObject _model;
-    [SerializeField] private SwipeDetector _swipeDetector;
-    [SerializeField] private GameManager _gameManager;
+    [SerializeField]
+    private GameObject _model;
+
+    [SerializeField]
+    private SwipeDetector _swipeDetector;
+
+    [SerializeField]
+    private GameManager _gameManager;
+
     private Vector3 _startingPos;
     private Animator _animator;
 
@@ -36,7 +42,6 @@ public class Player : MonoBehaviour
         else if (data.Direction == SwipeDirection.Right)
         {
             transform.position = new Vector3(_startingPos.x + 1f, _startingPos.y, _startingPos.z);
-
         }
     }
 
@@ -67,26 +72,26 @@ public class Player : MonoBehaviour
                 }
             case "Thread":
                 {
+                    AudioSource audioSource = GetComponent<AudioSource>();
+                    _gameManager.MusicManager.PlaySourceWithClip(audioSource, "hitObstacle");
                     IsStunned = true;
                     CurrentHitObstacle = collision.gameObject;
                     _gameManager.PlayerWasStunned();
-                    this.GetComponent<AudioSource>().clip = _gameManager.MusicManager.Sfx[2];
-                    this.GetComponent<AudioSource>().Play();
                     break;
                 }
             case "MaterialBreak":
                 {
+                    AudioSource audioSource = GetComponent<AudioSource>();
+                    _gameManager.MusicManager.PlaySourceWithClip(audioSource, "hitObstacle");
                     Destroy(collision.gameObject);
-                    this.GetComponent<AudioSource>().clip = _gameManager.MusicManager.Sfx[2];
-                    this.GetComponent<AudioSource>().Play();
                     _gameManager.GameOver();
                     break;
                 }
             case "TimeBonus":
                 {
+                    AudioSource audioSource = GetComponent<AudioSource>();
+                    _gameManager.MusicManager.PlaySourceWithClip(audioSource, "timeBonus");
                     _gameManager.RemainingTime += 5.0f;
-                    this.GetComponent<AudioSource>().clip = _gameManager.MusicManager.Sfx[3];
-                    this.GetComponent<AudioSource>().Play();
                     Destroy(collision.gameObject);
                     break;
                 }
