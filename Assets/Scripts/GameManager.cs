@@ -88,7 +88,7 @@ public class GameManager : MonoBehaviour
 
     public void TimeOut()
     {
-        this.ScrollSpeed = 0.0f;
+        ScrollSpeed = 0.0f;
         AntiStunTapCounter = -1;
         _gameState = GameState.COMPLETED;
         _obstacles.SetActive(false);
@@ -100,10 +100,8 @@ public class GameManager : MonoBehaviour
 
     public void GameOver()
     {
-        _musicManager.GetComponent<AudioSource>().clip = _musicManager.GameOverClip;
-        _musicManager.GetComponent<AudioSource>().Play();
-
-        this.ScrollSpeed = 0.0f;
+        _musicManager.PlayGameOverMusic();
+        ScrollSpeed = 0.0f;
         AntiStunTapCounter = -1;
         _gameState = GameState.GAME_OVER;
         _obstacles.SetActive(false);
@@ -115,9 +113,9 @@ public class GameManager : MonoBehaviour
 
     public void RetryGame()
     {
-        _musicManager.RandomBackgroundMusciPlay();
-        this.ScrollSpeed = _startSpeed;
-        this._pointsCounter = 0;
+        _musicManager.PlayRandomBackgroundMusic();
+        ScrollSpeed = _startSpeed;
+        _pointsCounter = 0;
         _combo = 0;
         _gameState = GameState.IN_PROGRESS;
         _obstacles.SetActive(true);
@@ -144,14 +142,14 @@ public class GameManager : MonoBehaviour
         float percent = UnityEngine.Random.Range(0.0f, 1.0f);
         if (percent < _obstaclesPercentage  || obstacleInt < _obsatcleGap)
         {
-            GameObject teeth = GameObject.Instantiate(_obstaclesObjectArray[0]);
+            GameObject teeth = Instantiate(_obstaclesObjectArray[0]);
             teeth.transform.position = spawnPosition;
             teeth.transform.SetParent(_obstacles.transform);
             _combo++;
             if (_combo >= 20)
             {
                 float side = UnityEngine.Random.Range(0.0f, 1.0f);
-                GameObject timeBonus = GameObject.Instantiate(_obstaclesObjectArray[4]);
+                GameObject timeBonus = Instantiate(_obstaclesObjectArray[4]);
                 if (side < 0.5f)
                 {
                     timeBonus.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z); ;
@@ -192,8 +190,8 @@ public class GameManager : MonoBehaviour
         else
         {
             float side = UnityEngine.Random.Range(0.0f, 1.0f);
-            GameObject tooth = GameObject.Instantiate(_obstaclesObjectArray[1]);
-            GameObject materialBreak = GameObject.Instantiate(_obstaclesObjectArray[3]);
+            GameObject tooth = Instantiate(_obstaclesObjectArray[1]);
+            GameObject materialBreak = Instantiate(_obstaclesObjectArray[3]);
 
 
             if (side < 0.5f)
@@ -223,8 +221,8 @@ public class GameManager : MonoBehaviour
     {
          AntiStunTapCounter--;
         _player.PlayAnimation("Shake");
-        _player.GetComponent<AudioSource>().clip = _musicManager.Sfx[1];
-        _player.GetComponent<AudioSource>().Play();
+        AudioSource playerAudioSource = _player.GetComponent<AudioSource>();
+        _musicManager.PlaySourceWithClip(playerAudioSource, "decreaseStun");
     }
 
     public void PlayerWasStunned()

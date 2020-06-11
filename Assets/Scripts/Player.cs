@@ -70,23 +70,23 @@ public class Player : MonoBehaviour
                     IsStunned = true;
                     CurrentHitObstacle = collision.gameObject;
                     _gameManager.PlayerWasStunned();
-                    this.GetComponent<AudioSource>().clip = _gameManager.MusicManager.Sfx[2];
-                    this.GetComponent<AudioSource>().Play();
+                    AudioSource audioSource = GetComponent<AudioSource>();
+                    _gameManager.MusicManager.PlaySourceWithClip(audioSource, "hitObstacle");
                     break;
                 }
             case "MaterialBreak":
                 {
                     Destroy(collision.gameObject);
-                    this.GetComponent<AudioSource>().clip = _gameManager.MusicManager.Sfx[2];
-                    this.GetComponent<AudioSource>().Play();
+                    AudioSource audioSource = GetComponent<AudioSource>();
+                    _gameManager.MusicManager.PlaySourceWithClip(audioSource, "hitObstacle");
                     _gameManager.GameOver();
                     break;
                 }
             case "TimeBonus":
                 {
                     _gameManager.RemainingTime += 5.0f;
-                    this.GetComponent<AudioSource>().clip = _gameManager.MusicManager.Sfx[3];
-                    this.GetComponent<AudioSource>().Play();
+                    AudioSource audioSource = GetComponent<AudioSource>();
+                    _gameManager.MusicManager.PlaySourceWithClip(audioSource, "timeBonus");
                     Destroy(collision.gameObject);
                     break;
                 }
