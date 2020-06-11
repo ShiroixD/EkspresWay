@@ -5,10 +5,18 @@ using UnityEngine;
 
 public class SwipeDetector : MonoBehaviour
 {
-    [SerializeField] private GameManager _gameManager;
-    [SerializeField] private Player _player;
-    [SerializeField] private float _delayToReadSwipe;
-    [SerializeField] private float _delayToReturnCenterPosition = 0.1f;
+    [SerializeField]
+    private GameManager _gameManager;
+
+    [SerializeField]
+    private Player _player;
+
+    [SerializeField]
+    private float _delayToReadSwipe;
+
+    [SerializeField]
+    private float _delayToReturnCenterPosition = 0.1f;
+
     private Vector2 _fingerDownPosition;
     private Vector2 _fingerUpPosition;
     private bool _fingerPushed = false;
@@ -39,23 +47,6 @@ public class SwipeDetector : MonoBehaviour
                 {
                     Debug.Log("Should return to normal");
                     StartCoroutine(ReturnToNormalState(_delayToReturnCenterPosition));
-                }
-            }
-            else
-            {
-                if (_gameManager.AntiStunTapCounter == 0)
-                {
-                    AudioSource audioSource = GetComponent<AudioSource>();
-                    _gameManager.MusicManager.PlaySourceWithClip(audioSource, "stunRelease");
-                    _player.IsStunned = false;
-                    _gameManager.AntiStunTapCounter = -1;
-                    if (_player.CurrentHitObstacle != null)
-                    {
-                        _player.CurrentHitObstacle.GetComponent<Obstacle>().Disappear();
-                        _player.CurrentHitObstacle = null;
-                    }
-                    _gameManager.RestartSpeed();
-                    StartCoroutine(_gameManager.GenerateMap());
                 }
             }
         }

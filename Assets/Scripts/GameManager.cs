@@ -13,21 +13,41 @@ public class GameManager : MonoBehaviour
     public GameState GameState { get => _gameState; set => _gameState = value; }
     public Player Player { get => _player; set => _player = value; }
     public MusicManager MusicManager { get => _musicManager; set => _musicManager = value; }
+    public int Combo { get => _combo; set => _combo = value; }
 
-    [SerializeField] private UiManager _uiManager;
-    [SerializeField] private MusicManager _musicManager;
-    [SerializeField] private GameObject _playerObject;
-    [SerializeField] private GameObject _obstacles;
-    [SerializeField] private GameObject _obstaclesSpawnPoint;
-    [SerializeField] private GameObject[] _obstaclesObjectArray;
-    [SerializeField] private SwipeDetector _swipeDetector;
-    [SerializeField] [Range(0.0f, 1.0f)] private float _obstaclesPercentage;
-    [SerializeField] private float _startSpeed = 5f;
-    [SerializeField] private float _speedLimit = 10f;
-    [SerializeField] private float _timeLimitMin = 1;
-    [SerializeField] private float _speedDelta = 0.001f;
-    [SerializeField] private int _obsatcleGap = 5;
-    [SerializeField] private Player _player;
+    [SerializeField]
+    private UiManager _uiManager;
+
+    [SerializeField]
+    private MusicManager _musicManager;
+
+    [SerializeField]
+    private MapGenerator _mapGenerator;
+
+    [SerializeField]
+    private GameObject _playerObject;
+
+    [SerializeField]
+    private GameObject _obstacles;
+
+    [SerializeField]
+    private SwipeDetector _swipeDetector;
+
+    [SerializeField]
+    private float _startSpeed = 5f;
+
+    [SerializeField]
+    private float _speedLimit = 10f;
+
+    [SerializeField]
+    private float _timeLimitMin = 1;
+
+    [SerializeField]
+    private float _speedDelta = 0.001f;
+
+    [SerializeField]
+    private Player _player;
+
     private float _currentTime;
     private int _combo = 0;
 
@@ -54,11 +74,24 @@ public class GameManager : MonoBehaviour
             {
                 TimeOut();
             }
+            if (AntiStunTapCounter == 0)
+            {
+                AntiStunTapCounter = -1;
+                AudioSource audioSource = _player.GetComponent<AudioSource>();
+                _musicManager.PlaySourceWithClip(audioSource, "stunRelease");
+                _player.IsStunned = false;
+                if (_player.CurrentHitObstacle != null)
+                {
+                    _player.CurrentHitObstacle.GetComponent<Obstacle>().Disappear();
+                    _player.CurrentHitObstacle = null;
+                }
+                RestartSpeed();
+                _mapGenerator.StartGenerating();
+            }
         }
         else
             _uiManager.SetRemainingTime(0);
     }
-
 
     private void FixedUpdate()
     {
@@ -83,7 +116,7 @@ public class GameManager : MonoBehaviour
         _uiManager.ShowInGameUi();
         _playerObject.SetActive(true);
         _obstacles.SetActive(true);
-        StartCoroutine(GenerateMap());
+        _mapGenerator.StartGenerating();
     }
 
     public void TimeOut()
@@ -124,98 +157,9 @@ public class GameManager : MonoBehaviour
         _currentTime = _timeLimitMin * 60.0f;
         _uiManager.SetRemainingTime(_currentTime);
         _player.transform.parent.gameObject.SetActive(true);
-        StartCoroutine(GenerateMap());
-
+        _mapGenerator.StartGenerating();
     }
 
-
-    public IEnumerator GenerateMap()
-    {
-        UnityEngine.Random random = new UnityEngine.Random();
-        Vector3 spawnPosition = _obstaclesSpawnPoint.transform.position;
-        float breakPercent = _obstaclesPercentage + 3 * ((1 - _obstaclesPercentage) / 4) ;
-        int obstacleInt = 0;
-
-        while (_gameState == GameState.IN_PROGRESS && !_player.IsStunned)
-        {
-
-        float percent = UnityEngine.Random.Range(0.0f, 1.0f);
-        if (percent < _obstaclesPercentage  || obstacleInt < _obsatcleGap)
-        {
-            GameObject teeth = Instantiate(_obstaclesObjectArray[0]);
-            teeth.transform.position = spawnPosition;
-            teeth.transform.SetParent(_obstacles.transform);
-            _combo++;
-            if (_combo >= 20)
-            {
-                float side = UnityEngine.Random.Range(0.0f, 1.0f);
-                GameObject timeBonus = Instantiate(_obstaclesObjectArray[4]);
-                if (side < 0.5f)
-                {
-                    timeBonus.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z); ;
-                    timeBonus.transform.SetParent(_obstacles.transform);
-                }
-                else
-                {
-                    timeBonus.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z); ;
-                    timeBonus.transform.SetParent(_obstacles.transform);
-                }
-                _combo = 0;
-            }
-                obstacleInt++;
-        }
-        else if (percent >= _obstaclesPercentage && percent < breakPercent)
-        {
-            float side = UnityEngine.Random.Range(0.0f, 1.0f);
-            GameObject tooth = GameObject.Instantiate(_obstaclesObjectArray[1]);
-            GameObject thread = GameObject.Instantiate(_obstaclesObjectArray[2]);
-            if (side < 0.5f)
-            {
-                tooth.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
-                tooth.transform.SetParent(_obstacles.transform);
-
-                thread.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
-                thread.transform.SetParent(_obstacles.transform);
-            }
-            else
-            {
-                tooth.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
-                tooth.transform.SetParent(_obstacles.transform);
-
-                thread.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
-                thread.transform.SetParent(_obstacles.transform);
-            }
-                obstacleInt = 0;
-        }
-        else
-        {
-            float side = UnityEngine.Random.Range(0.0f, 1.0f);
-            GameObject tooth = Instantiate(_obstaclesObjectArray[1]);
-            GameObject materialBreak = Instantiate(_obstaclesObjectArray[3]);
-
-
-            if (side < 0.5f)
-                {
-                    tooth.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
-                    tooth.transform.SetParent(_obstacles.transform);
-
-                    materialBreak.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
-                    materialBreak.transform.SetParent(_obstacles.transform);
-                }
-                else
-                {
-                    tooth.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
-                    tooth.transform.SetParent(_obstacles.transform);
-
-                    materialBreak.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
-                    materialBreak.transform.SetParent(_obstacles.transform);
-                }
-                obstacleInt = 0;
-            }
-            yield return new WaitForSecondsRealtime(0.3f);
-        }
-        yield return null;
-    }
 
     public void DecreaseAntiStunTapCounter()
     {

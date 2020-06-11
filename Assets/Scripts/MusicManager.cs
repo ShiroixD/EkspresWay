@@ -4,9 +4,14 @@ using UnityEngine;
 
 public class MusicManager : MonoBehaviour
 {
-    [SerializeField] private AudioClip[] _musicClips;
-    [SerializeField] private AudioClip[] _sounds;
-    [SerializeField] private AudioClip _gameOverClip;
+    [SerializeField]
+    private AudioClip[] _musicClips;
+
+    [SerializeField]
+    private AudioClip[] _sounds;
+
+    [SerializeField]
+    private AudioClip _gameOverClip;
 
     void Start()
     {

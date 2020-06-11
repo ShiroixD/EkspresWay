@@ -551,7 +551,7 @@ GameObject:
   - component: {fileID: 129129431}
   m_Layer: 0
   m_Name: MusicManager
-  m_TagString: Untagged
+  m_TagString: MusicManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -726,7 +726,7 @@ Transform:
   - {fileID: 615456153}
   - {fileID: 2145486942}
   m_Father: {fileID: 0}
-  m_RootOrder: 4
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &188565590
 GameObject:
@@ -1151,7 +1151,7 @@ Transform:
   m_LocalScale: {x: 0.32479286, y: 1, z: 6.069376}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 5
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &469539925
 GameObject:
@@ -1598,12 +1598,12 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 728980226}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 13, z: 0.73}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_Father: {fileID: 1008023549}
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &729321710
 GameObject:
@@ -1793,7 +1793,7 @@ Transform:
   - {fileID: 216197871}
   - {fileID: 1959175504}
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &873562904
 GameObject:
@@ -2303,6 +2303,61 @@ Animation:
   m_PlayAutomatically: 0
   m_AnimatePhysics: 0
   m_CullingType: 0
+--- !u!1 &1008023547
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1008023549}
+  - component: {fileID: 1008023548}
+  m_Layer: 0
+  m_Name: MapGenerator
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1008023548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1008023547}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 697872e8a1f27c94b88439d2f60ebe06, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _gameManager: {fileID: 2062205277}
+  _obstaclesSpawnPoint: {fileID: 728980226}
+  _obstaclesObjectArray:
+  - {fileID: 658758451156687089, guid: 27460b5e41820d446af3f036397c4d36, type: 3}
+  - {fileID: 7857573828661583205, guid: 1f39e097ea9b5424d9b3af0769d660f4, type: 3}
+  - {fileID: 2803252809315670418, guid: 7c3c5232dc485724b958f1adce765264, type: 3}
+  - {fileID: 2803252809315670418, guid: e199a7ef66577224895c4bdf7ff7629e, type: 3}
+  - {fileID: 4711743636541731497, guid: 47d541fcc8a2da2439e5d6abb2b6cf20, type: 3}
+  _obstacles: {fileID: 1842289406}
+  _obstaclesPercentage: 0.7
+  _obsatcleGap: 5
+--- !u!4 &1008023549
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1008023547}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 728980227}
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1018072883
 GameObject:
   m_ObjectHideFlags: 0
@@ -3131,7 +3186,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 9
+  m_RootOrder: 10
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1609270791
 GameObject:
@@ -3499,7 +3554,7 @@ Transform:
   - {fileID: 21053570}
   - {fileID: 1435855862}
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1959175500
 GameObject:
@@ -3948,6 +4003,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _uiManager: {fileID: 2062205278}
   _musicManager: {fileID: 129129431}
+  _mapGenerator: {fileID: 1008023548}
   _playerObject: {fileID: 731826892}
   _obstacles: {fileID: 1842289406}
   _obstaclesSpawnPoint: {fileID: 728980226}
@@ -4087,7 +4143,7 @@ RectTransform:
   - {fileID: 873562905}
   - {fileID: 1761102075}
   m_Father: {fileID: 0}
-  m_RootOrder: 8
+  m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

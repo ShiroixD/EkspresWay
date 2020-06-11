@@ -4,8 +4,12 @@ using UnityEngine;
 
 public class BackgroundScroll : MonoBehaviour
 {
-    [SerializeField] private GameObject _playerObject;
-    [SerializeField] private float _distanceLimitToMoveUp = 34f;
+    [SerializeField]
+    private GameObject _playerObject;
+
+    [SerializeField]
+    private float _distanceLimitToMoveUp = 34f;
+
     private GameManager _gameManager;
     private Vector3 _startPosition;
 

@@ -8,9 +8,15 @@ public class Player : MonoBehaviour
     public bool IsStunned { get; set; }
     public GameObject CurrentHitObstacle { get; set; }
 
-    [SerializeField] private GameObject _model;
-    [SerializeField] private SwipeDetector _swipeDetector;
-    [SerializeField] private GameManager _gameManager;
+    [SerializeField]
+    private GameObject _model;
+
+    [SerializeField]
+    private SwipeDetector _swipeDetector;
+
+    [SerializeField]
+    private GameManager _gameManager;
+
     private Vector3 _startingPos;
     private Animator _animator;
 
