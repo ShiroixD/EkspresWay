@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 
 public class GameManager : MonoBehaviour
 {
-    public float ScrollSpeed { get; set; }
+    public float Speed { get => _currentSpeed; set => _currentSpeed = value; }
     public long PointsCounter { get => _pointsCounter; set => _pointsCounter = value; }
     public int AntiStunTapCounter { get; set; } = -1;
     public float RemainingTime { get => _currentTime; set => _currentTime = value; }
@@ -43,10 +43,16 @@ public class GameManager : MonoBehaviour
     private float _speedLimit = 10f;
 
     [SerializeField]
+    private float _currentSpeed = 0f;
+
+    [SerializeField]
     private float _timeLimitMin = 1;
 
     [SerializeField]
-    private float _speedDelta = 0.001f;
+    private float _speedDelta = 0.5f;
+
+    [SerializeField]
+    private float _raiseSpeedInterval = 15.0f;
 
     [SerializeField]
     private Player _player;
@@ -60,7 +66,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         _pointsCounter = 0;
-        ScrollSpeed = _startSpeed;
+        _currentSpeed = _startSpeed;
         _gameState = GameState.MENU;
         _uiManager.ShowStartUi();
         _currentTime = _timeLimitMin * 60.0f;
@@ -96,19 +102,27 @@ public class GameManager : MonoBehaviour
             _uiManager.SetRemainingTime(0);
     }
 
-    private void FixedUpdate()
+    private IEnumerator RaiseSpeed(float time)
     {
-        if (_player != null)
+        while (_gameState == GameState.IN_PROGRESS)
         {
-            if (!_player.IsStunned && _startSpeed < _speedLimit)
-                ScrollSpeed += _speedDelta;
+            yield return new WaitForSecondsRealtime(time);
+            if (_gameState != GameState.IN_PROGRESS)
+                break;
+            while (_player.IsStunned)
+                yield return null;
+            if (_player != null)
+            {
+                if (_currentSpeed < _speedLimit)
+                    _currentSpeed += _speedDelta;
+            }
         }
     }
 
     public void RestartSpeed()
     {
         _uiManager.HideAntiStunButton();
-        ScrollSpeed = _startSpeed;
+        _currentSpeed = _startSpeed;
         _combo = 0;
     }
 
@@ -120,11 +134,12 @@ public class GameManager : MonoBehaviour
         _playerObject.SetActive(true);
         _obstacles.SetActive(true);
         _mapGenerator.StartGenerating();
+        StartCoroutine(RaiseSpeed(_raiseSpeedInterval));
     }
 
     public void TimeOut()
     {
-        ScrollSpeed = 0.0f;
+        _currentSpeed = 0.0f;
         AntiStunTapCounter = -1;
         _gameState = GameState.COMPLETED;
         _obstacles.SetActive(false);
@@ -137,7 +152,7 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         _musicManager.PlayGameOverMusic();
-        ScrollSpeed = 0.0f;
+        _currentSpeed = 0.0f;
         AntiStunTapCounter = -1;
         _gameState = GameState.GAME_OVER;
         _obstacles.SetActive(false);
@@ -150,7 +165,7 @@ public class GameManager : MonoBehaviour
     public void RetryGame()
     {
         _musicManager.PlayRandomBackgroundMusic();
-        ScrollSpeed = _startSpeed;
+        _currentSpeed = _startSpeed;
         _pointsCounter = 0;
         _combo = 0;
         _gameState = GameState.IN_PROGRESS;
@@ -161,6 +176,7 @@ public class GameManager : MonoBehaviour
         _uiManager.SetRemainingTime(_currentTime);
         _player.transform.parent.gameObject.SetActive(true);
         _mapGenerator.StartGenerating();
+        StartCoroutine(RaiseSpeed(_raiseSpeedInterval));
     }
 
 
@@ -175,7 +191,7 @@ public class GameManager : MonoBehaviour
     public void PlayerWasStunned()
     {
         _camera.GetComponent<Animation>().Play("Camera");
-        ScrollSpeed = 0;
+        _currentSpeed = 0;
         _uiManager.ShowAntiStunButton();
         AntiStunTapCounter = 10;
     }

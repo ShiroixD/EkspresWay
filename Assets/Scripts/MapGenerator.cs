@@ -21,7 +21,7 @@ public class MapGenerator : MonoBehaviour
     private float _obstaclesPercentage;
 
     [SerializeField]
-    private int _obsatcleGap = 5;
+    private int _obstacleGap = 5;
 
     private Player _player;
     
@@ -40,27 +40,61 @@ public class MapGenerator : MonoBehaviour
         StartCoroutine(GenerateMap());
     }
 
+    private GameObject SpawnGameObject(string name)
+    {
+        GameObject objectToSpawn = null;
+        switch(name)
+        {
+            case "teeth":
+                {
+                    objectToSpawn = _obstaclesObjectArray[0];
+                    break;
+                }
+            case "tooth":
+                {
+                    objectToSpawn = _obstaclesObjectArray[1];
+                    break;
+                }
+            case "thread":
+                {
+                    objectToSpawn = _obstaclesObjectArray[2];
+                    break;
+                }
+            case "materialBreak":
+                {
+                    objectToSpawn = _obstaclesObjectArray[3];
+                    break;
+                }
+            case "timeBonus":
+                {
+                    objectToSpawn = _obstaclesObjectArray[4];
+                    break;
+                }
+        }
+        if (objectToSpawn != null)
+            return Instantiate(objectToSpawn);
+        else return null;
+    }
+
     private IEnumerator GenerateMap()
     {
-        UnityEngine.Random random = new UnityEngine.Random();
         Vector3 spawnPosition = _obstaclesSpawnPoint.transform.position;
         float breakPercent = _obstaclesPercentage + 3 * ((1 - _obstaclesPercentage) / 4);
         int obstacleInt = 0;
 
         while (_gameManager.GameState == GameState.IN_PROGRESS && !_player.IsStunned)
         {
-
-            float percent = UnityEngine.Random.Range(0.0f, 1.0f);
-            if (percent < _obstaclesPercentage || obstacleInt < _obsatcleGap)
+            float percent = Random.Range(0.0f, 1.0f);
+            if (percent < _obstaclesPercentage || obstacleInt < _obstacleGap)
             {
-                GameObject teeth = Instantiate(_obstaclesObjectArray[0]);
+                GameObject teeth = SpawnGameObject("teeth");
                 teeth.transform.position = spawnPosition;
                 teeth.transform.SetParent(_obstacles.transform);
                 _gameManager.Combo++;
                 if (_gameManager.Combo >= 20)
                 {
-                    float side = UnityEngine.Random.Range(0.0f, 1.0f);
-                    GameObject timeBonus = Instantiate(_obstaclesObjectArray[4]);
+                    float side = Random.Range(0.0f, 1.0f);
+                    GameObject timeBonus = SpawnGameObject("timeBonus");
                     if (side < 0.5f)
                     {
                         timeBonus.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z); ;
@@ -77,9 +111,9 @@ public class MapGenerator : MonoBehaviour
             }
             else if (percent >= _obstaclesPercentage && percent < breakPercent)
             {
-                float side = UnityEngine.Random.Range(0.0f, 1.0f);
-                GameObject tooth = GameObject.Instantiate(_obstaclesObjectArray[1]);
-                GameObject thread = GameObject.Instantiate(_obstaclesObjectArray[2]);
+                float side = Random.Range(0.0f, 1.0f);
+                GameObject tooth = SpawnGameObject("tooth");
+                GameObject thread = SpawnGameObject("thread");
                 if (side < 0.5f)
                 {
                     tooth.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
@@ -100,10 +134,9 @@ public class MapGenerator : MonoBehaviour
             }
             else
             {
-                float side = UnityEngine.Random.Range(0.0f, 1.0f);
-                GameObject tooth = Instantiate(_obstaclesObjectArray[1]);
-                GameObject materialBreak = Instantiate(_obstaclesObjectArray[3]);
-
+                float side = Random.Range(0.0f, 1.0f);
+                GameObject tooth = SpawnGameObject("tooth");
+                GameObject materialBreak = SpawnGameObject("materialBreak");
 
                 if (side < 0.5f)
                 {
