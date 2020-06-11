@@ -16,6 +16,9 @@ public class GameManager : MonoBehaviour
     public int Combo { get => _combo; set => _combo = value; }
 
     [SerializeField]
+    private Camera _camera;
+
+    [SerializeField]
     private UiManager _uiManager;
 
     [SerializeField]
@@ -163,21 +166,20 @@ public class GameManager : MonoBehaviour
 
     public void DecreaseAntiStunTapCounter()
     {
-         AntiStunTapCounter--;
-        _player.PlayAnimation("Shake");
         AudioSource playerAudioSource = _player.GetComponent<AudioSource>();
         _musicManager.PlaySourceWithClip(playerAudioSource, "decreaseStun");
+        _player.PlayAnimation("Shake");
+        AntiStunTapCounter--;
     }
 
     public void PlayerWasStunned()
     {
-        GameObject.Find("Main Camera").GetComponent<Animation>().Play("Camera");
+        _camera.GetComponent<Animation>().Play("Camera");
         ScrollSpeed = 0;
-        AntiStunTapCounter = 10;
         _uiManager.ShowAntiStunButton();
+        AntiStunTapCounter = 10;
     }
 }
-
 
 public enum GameState
 {

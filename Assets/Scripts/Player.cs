@@ -42,7 +42,6 @@ public class Player : MonoBehaviour
         else if (data.Direction == SwipeDirection.Right)
         {
             transform.position = new Vector3(_startingPos.x + 1f, _startingPos.y, _startingPos.z);
-
         }
     }
 
@@ -73,26 +72,26 @@ public class Player : MonoBehaviour
                 }
             case "Thread":
                 {
+                    AudioSource audioSource = GetComponent<AudioSource>();
+                    _gameManager.MusicManager.PlaySourceWithClip(audioSource, "hitObstacle");
                     IsStunned = true;
                     CurrentHitObstacle = collision.gameObject;
                     _gameManager.PlayerWasStunned();
-                    AudioSource audioSource = GetComponent<AudioSource>();
-                    _gameManager.MusicManager.PlaySourceWithClip(audioSource, "hitObstacle");
                     break;
                 }
             case "MaterialBreak":
                 {
-                    Destroy(collision.gameObject);
                     AudioSource audioSource = GetComponent<AudioSource>();
                     _gameManager.MusicManager.PlaySourceWithClip(audioSource, "hitObstacle");
+                    Destroy(collision.gameObject);
                     _gameManager.GameOver();
                     break;
                 }
             case "TimeBonus":
                 {
-                    _gameManager.RemainingTime += 5.0f;
                     AudioSource audioSource = GetComponent<AudioSource>();
                     _gameManager.MusicManager.PlaySourceWithClip(audioSource, "timeBonus");
+                    _gameManager.RemainingTime += 5.0f;
                     Destroy(collision.gameObject);
                     break;
                 }

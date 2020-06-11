@@ -12,10 +12,10 @@ public class SwipeDetector : MonoBehaviour
     private Player _player;
 
     [SerializeField]
-    private float _delayToReadSwipe;
+    private float _delayToReadSwipe = 0.3f;
 
     [SerializeField]
-    private float _delayToReturnCenterPosition = 0.1f;
+    private float _delayToReturnCenterPosition = 0.3f;
 
     private Vector2 _fingerDownPosition;
     private Vector2 _fingerUpPosition;
@@ -50,7 +50,7 @@ public class SwipeDetector : MonoBehaviour
                 }
             }
         }
-#elif UNITY_EDITOR
+        #elif UNITY_EDITOR
         if (!_player.IsStunned)
         {
             if (Input.GetMouseButtonDown(0) && !_fingerPushed)
@@ -67,21 +67,7 @@ public class SwipeDetector : MonoBehaviour
                 StartCoroutine(ReturnToNormalState(_delayToReturnCenterPosition));
             }
         }
-        else
-        {
-            if (_gameManager.AntiStunTapCounter >= 10)
-            {
-                _player.IsStunned = false;
-                _gameManager.AntiStunTapCounter = -1;
-                if (_player.CurrentHitObstacle != null)
-                {
-                    _player.CurrentHitObstacle.GetComponent<Obstacle>().Disappear();
-                    _player.CurrentHitObstacle = null;
-                }
-                _gameManager.RestartSpeed();
-            }
-        }
-#endif
+        #endif
     }
 
     private IEnumerator SwipeTimer()
