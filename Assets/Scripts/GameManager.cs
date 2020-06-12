@@ -58,6 +58,21 @@ public class GameManager : MonoBehaviour
     private float _raiseSpeedInterval = 15.0f;
 
     [SerializeField]
+    private float _globalLimitSpeedLimit = 15;
+
+    [SerializeField]
+    private float _globalLimitSpawnTimeDelay = 0.12f;
+
+    [SerializeField]
+    private float _globalLimitObstaclePercentage = 0.1f;
+
+    [SerializeField]
+    private int globalLimitObstacleGap = 3;
+
+    [SerializeField]
+    private int _globalLimitComboTimeBonuslimit = 10;
+
+    [SerializeField]
     private Player _player;
 
     private int _currentStage;
@@ -71,9 +86,9 @@ public class GameManager : MonoBehaviour
     {
         _currentStage = 1;
         _pointsCounter = 0;
-        _currentSpeed = _startSpeed;
+        _currentSpeed = 0;
         _gameState = GameState.MENU;
-        _uiManager.ShowStartUi();
+        _uiManager.ShowStartUi(_currentStage);
         _currentTime = _timeLimitMin * 60.0f;
         _uiManager.SetRemainingTime(_currentTime);
         LoadGame();
@@ -87,7 +102,7 @@ public class GameManager : MonoBehaviour
             _uiManager.SetRemainingTime(_currentTime);
             if (_currentTime <= 0)
             {
-                TimeOut();
+                CompletedStage();
             }
             if (AntiStunTapCounter == 0)
             {
@@ -108,6 +123,112 @@ public class GameManager : MonoBehaviour
             _uiManager.SetRemainingTime(0);
     }
 
+    public void StartGame()
+    {
+        _gameState = GameState.IN_PROGRESS;
+        _currentSpeed = _startSpeed;
+        _uiManager.HideStartUi();
+        _uiManager.ShowInGameUi();
+        _playerObject.SetActive(true);
+        _obstacles.SetActive(true);
+        _mapGenerator.StartGenerating();
+        StartCoroutine(RaiseSpeed(_raiseSpeedInterval));
+    }
+
+    public void GameOver()
+    {
+        _musicManager.PlayGameOverMusic();
+        _currentSpeed = 0.0f;
+        AntiStunTapCounter = -1;
+        _gameState = GameState.GAME_OVER;
+        _obstacles.SetActive(false);
+        _uiManager.ShowGameOverUi(_currentStage);
+        _uiManager.HideInGameUi();
+        _player.transform.parent.gameObject.SetActive(false);
+        _combo = 0;
+        RemoveObstacles();
+    }
+
+    public void RetryGame()
+    {
+        _musicManager.PlayRandomBackgroundMusic();
+        _currentSpeed = _startSpeed;
+        _pointsCounter = 0;
+        _combo = 0;
+        _gameState = GameState.IN_PROGRESS;
+        _obstacles.SetActive(true);
+        _uiManager.ShowInGameUi();
+        _uiManager.HideGameOverUi();
+        _currentTime = _timeLimitMin * 60.0f;
+        _uiManager.SetRemainingTime(_currentTime);
+        _player.transform.parent.gameObject.SetActive(true);
+        _mapGenerator.StartGenerating();
+        StartCoroutine(RaiseSpeed(_raiseSpeedInterval));
+    }
+
+    public void DecreaseAntiStunTapCounter()
+    {
+        AudioSource playerAudioSource = _player.GetComponent<AudioSource>();
+        _musicManager.PlaySourceWithClip(playerAudioSource, "decreaseStun");
+        _player.PlayAnimation("Shake");
+        AntiStunTapCounter--;
+    }
+
+    public void PlayerWasStunned()
+    {
+        _camera.GetComponent<Animation>().Play("Camera");
+        _currentSpeed = 0;
+        _uiManager.ShowAntiStunButton();
+        AntiStunTapCounter = 10;
+    }
+
+    public void NextStage()
+    {
+        _gameState = GameState.IN_PROGRESS;
+        _player.IsStunned = false;
+        _currentSpeed = _startSpeed;
+        _obstacles.SetActive(true);
+        _uiManager.HideTimeOutUi();
+        _uiManager.ShowInGameUi();
+        _uiManager.SetRemainingTime(_currentTime);
+        _player.transform.parent.gameObject.SetActive(true);
+        _mapGenerator.StartGenerating();
+        StartCoroutine(RaiseSpeed(_raiseSpeedInterval));
+    }
+
+    public void ResetGame()
+    {
+        _currentStage = 1;
+        _pointsCounter = 0;
+        _currentSpeed = 0.0f;
+        _speedLimit = 4f;
+        _timeLimitMin = 0.5f;
+        _currentTime = _timeLimitMin * 60.0f;
+        AntiStunTapCounter = -1;
+        _mapGenerator.SpawnTimeDelay = 0.36f;
+        _mapGenerator.ObstaclesPercentage = 0.9f;
+        _mapGenerator.ObstacleGap = 10;
+        _mapGenerator.ComboTimeBonusLimit = 30;
+        _combo = 0;
+        _uiManager.ShowStartUi(_currentStage);  
+        _uiManager.SetRemainingTime(_currentTime);
+        SaveGame();
+    }
+
+    private void SaveGame()
+    {
+        SaveSystem.SaveGameData
+        (
+            stage: _currentStage,
+            speedLimit: _speedLimit,
+            timeLimit: _timeLimitMin,
+            spawnTimeDelay: _mapGenerator.SpawnTimeDelay,
+            obstaclePercentage: _mapGenerator.ObstaclesPercentage,
+            obstacleGap: _mapGenerator.ObstacleGap,
+            comboTimeBonusLimit: _mapGenerator.ComboTimeBonusLimit
+        );
+    }
+
     private void LoadGame()
     {
         GameData gameData = SaveSystem.LoadGameData();
@@ -122,19 +243,11 @@ public class GameManager : MonoBehaviour
             _mapGenerator.ComboTimeBonusLimit = gameData.comboTimeBonusLimit;
             _currentTime = _timeLimitMin * 60.0f;
             _uiManager.SetRemainingTime(_currentTime);
+            _uiManager.ShowStartUi(_currentStage);
         }
         else
         {
-            SaveSystem.SaveGameData
-                (
-                    stage: _currentStage,
-                    speedLimit: _speedLimit,
-                    timeLimit: _timeLimitMin,
-                    spawnTimeDelay: _mapGenerator.SpawnTimeDelay,
-                    obstaclePercentage: _mapGenerator.ObstaclesPercentage,
-                    obstacleGap: _mapGenerator.ObstacleGap,
-                    comboTimeBonusLimit: _mapGenerator.ComboTimeBonusLimit
-                );
+            SaveGame();
         }
     }
 
@@ -155,81 +268,47 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void RestartSpeed()
+    private void RestartSpeed()
     {
         _uiManager.HideAntiStunButton();
         _currentSpeed = _startSpeed;
         _combo = 0;
     }
 
-    public void StartGame()
+    private void RemoveObstacles()
     {
-        _gameState = GameState.IN_PROGRESS;
-        _uiManager.HideStartUi();
-        _uiManager.ShowInGameUi();
-        _playerObject.SetActive(true);
-        _obstacles.SetActive(true);
-        _mapGenerator.StartGenerating();
-        StartCoroutine(RaiseSpeed(_raiseSpeedInterval));
+        foreach (Transform child in _obstacles.transform)
+        {
+            Destroy(child.gameObject);
+        }
     }
 
-    public void TimeOut()
+    private void CompletedStage()
     {
-        _currentSpeed = 0.0f;
-        AntiStunTapCounter = -1;
         _gameState = GameState.COMPLETED;
-        _obstacles.SetActive(false);
-        _uiManager.ShowGameOverUi();
-        _uiManager.HideInGameUi();
-        _player.transform.parent.gameObject.SetActive(false);
-        _combo = 0;
-    }
-
-    public void GameOver()
-    {
-        _musicManager.PlayGameOverMusic();
         _currentSpeed = 0.0f;
         AntiStunTapCounter = -1;
-        _gameState = GameState.GAME_OVER;
-        _obstacles.SetActive(false);
-        _uiManager.ShowGameOverUi();
-        _uiManager.HideInGameUi();
-        _player.transform.parent.gameObject.SetActive(false);
-        _combo = 0;
-    }
-
-    public void RetryGame()
-    {
-        _musicManager.PlayRandomBackgroundMusic();
-        _currentSpeed = _startSpeed;
+        _currentStage += 1;
+        if (_speedLimit < _globalLimitSpeedLimit)
+            _speedLimit += 0.5f;
+        _timeLimitMin += 1f / 6f;
+        _currentTime = _timeLimitMin * 60.0f;
+        if (_mapGenerator.SpawnTimeDelay > _globalLimitSpawnTimeDelay)
+            _mapGenerator.SpawnTimeDelay -= 0.03f;
+        if (_mapGenerator.ObstaclesPercentage > _globalLimitObstaclePercentage)
+            _mapGenerator.ObstaclesPercentage -= 0.1f;
+        if (_mapGenerator.ObstacleGap > globalLimitObstacleGap)
+            _mapGenerator.ObstacleGap -= 1;
+        if (_mapGenerator.ComboTimeBonusLimit > _globalLimitComboTimeBonuslimit)
+            _mapGenerator.ComboTimeBonusLimit -= 1;
         _pointsCounter = 0;
         _combo = 0;
-        _gameState = GameState.IN_PROGRESS;
-        _obstacles.SetActive(true);
-        _uiManager.ShowInGameUi();
-        _uiManager.HideGameOverUi();
-        _currentTime = _timeLimitMin * 60.0f;
-        _uiManager.SetRemainingTime(_currentTime);
-        _player.transform.parent.gameObject.SetActive(true);
-        _mapGenerator.StartGenerating();
-        StartCoroutine(RaiseSpeed(_raiseSpeedInterval));
-    }
-
-
-    public void DecreaseAntiStunTapCounter()
-    {
-        AudioSource playerAudioSource = _player.GetComponent<AudioSource>();
-        _musicManager.PlaySourceWithClip(playerAudioSource, "decreaseStun");
-        _player.PlayAnimation("Shake");
-        AntiStunTapCounter--;
-    }
-
-    public void PlayerWasStunned()
-    {
-        _camera.GetComponent<Animation>().Play("Camera");
-        _currentSpeed = 0;
-        _uiManager.ShowAntiStunButton();
-        AntiStunTapCounter = 10;
+        RemoveObstacles();
+        _obstacles.SetActive(false);
+        _uiManager.HideInGameUi();
+        _uiManager.ShowTimeOutUi(_currentStage - 1);
+        _player.transform.parent.gameObject.SetActive(false);
+        SaveGame();  
     }
 }
 
