@@ -58,8 +58,24 @@ public class GameManager : MonoBehaviour
     private float _raiseSpeedInterval = 15.0f;
 
     [SerializeField]
+    private float _globalLimitSpeedLimit = 15;
+
+    [SerializeField]
+    private float _globalLimitSpawnTimeDelay = 0.12f;
+
+    [SerializeField]
+    private float _globalLimitObstaclePercentage = 0.1f;
+
+    [SerializeField]
+    private int globalLimitObstacleGap = 3;
+
+    [SerializeField]
+    private int _globalLimitComboTimeBonuslimit = 10;
+
+    [SerializeField]
     private Player _player;
 
+    private int _currentStage;
     private float _currentTime;
     private int _combo = 0;
 
@@ -68,12 +84,14 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        _currentStage = 1;
         _pointsCounter = 0;
-        _currentSpeed = _startSpeed;
+        _currentSpeed = 0;
         _gameState = GameState.MENU;
-        _uiManager.ShowStartUi();
+        _uiManager.ShowStartUi(_currentStage);
         _currentTime = _timeLimitMin * 60.0f;
         _uiManager.SetRemainingTime(_currentTime);
+        LoadGame();
     }
 
     void Update()
@@ -84,7 +102,7 @@ public class GameManager : MonoBehaviour
             _uiManager.SetRemainingTime(_currentTime);
             if (_currentTime <= 0)
             {
-                TimeOut();
+                CompletedStage();
             }
             if (AntiStunTapCounter == 0)
             {
@@ -105,51 +123,16 @@ public class GameManager : MonoBehaviour
             _uiManager.SetRemainingTime(0);
     }
 
-    private IEnumerator RaiseSpeed(float time)
-    {
-        while (_gameState == GameState.IN_PROGRESS)
-        {
-            yield return new WaitForSecondsRealtime(time);
-            if (_gameState != GameState.IN_PROGRESS)
-                break;
-            while (_player.IsStunned)
-                yield return null;
-            if (_player != null)
-            {
-                if (_currentSpeed < _speedLimit)
-                    _currentSpeed += _speedDelta;
-            }
-        }
-    }
-
-    public void RestartSpeed()
-    {
-        _uiManager.HideAntiStunButton();
-        _currentSpeed = _startSpeed;
-        _combo = 0;
-    }
-
     public void StartGame()
     {
         _gameState = GameState.IN_PROGRESS;
+        _currentSpeed = _startSpeed;
         _uiManager.HideStartUi();
         _uiManager.ShowInGameUi();
         _playerObject.SetActive(true);
         _obstacles.SetActive(true);
         _mapGenerator.StartGenerating();
         StartCoroutine(RaiseSpeed(_raiseSpeedInterval));
-    }
-
-    public void TimeOut()
-    {
-        _currentSpeed = 0.0f;
-        AntiStunTapCounter = -1;
-        _gameState = GameState.COMPLETED;
-        _obstacles.SetActive(false);
-        _uiManager.ShowGameOverUi();
-        _uiManager.HideInGameUi();
-        _player.transform.parent.gameObject.SetActive(false);
-        _combo = 0;
     }
 
     public void GameOver()
@@ -159,10 +142,11 @@ public class GameManager : MonoBehaviour
         AntiStunTapCounter = -1;
         _gameState = GameState.GAME_OVER;
         _obstacles.SetActive(false);
-        _uiManager.ShowGameOverUi();
+        _uiManager.ShowGameOverUi(_currentStage);
         _uiManager.HideInGameUi();
         _player.transform.parent.gameObject.SetActive(false);
         _combo = 0;
+        RemoveObstacles();
     }
 
     public void RetryGame()
@@ -182,7 +166,6 @@ public class GameManager : MonoBehaviour
         StartCoroutine(RaiseSpeed(_raiseSpeedInterval));
     }
 
-
     public void DecreaseAntiStunTapCounter()
     {
         AudioSource playerAudioSource = _player.GetComponent<AudioSource>();
@@ -197,6 +180,135 @@ public class GameManager : MonoBehaviour
         _currentSpeed = 0;
         _uiManager.ShowAntiStunButton();
         AntiStunTapCounter = 10;
+    }
+
+    public void NextStage()
+    {
+        _gameState = GameState.IN_PROGRESS;
+        _player.IsStunned = false;
+        _currentSpeed = _startSpeed;
+        _obstacles.SetActive(true);
+        _uiManager.HideTimeOutUi();
+        _uiManager.ShowInGameUi();
+        _uiManager.SetRemainingTime(_currentTime);
+        _player.transform.parent.gameObject.SetActive(true);
+        _mapGenerator.StartGenerating();
+        StartCoroutine(RaiseSpeed(_raiseSpeedInterval));
+    }
+
+    public void ResetGame()
+    {
+        _currentStage = 1;
+        _pointsCounter = 0;
+        _currentSpeed = 0.0f;
+        _speedLimit = 4f;
+        _timeLimitMin = 0.5f;
+        _currentTime = _timeLimitMin * 60.0f;
+        AntiStunTapCounter = -1;
+        _mapGenerator.SpawnTimeDelay = 0.36f;
+        _mapGenerator.ObstaclesPercentage = 0.9f;
+        _mapGenerator.ObstacleGap = 10;
+        _mapGenerator.ComboTimeBonusLimit = 30;
+        _combo = 0;
+        _uiManager.ShowStartUi(_currentStage);  
+        _uiManager.SetRemainingTime(_currentTime);
+        SaveGame();
+    }
+
+    private void SaveGame()
+    {
+        SaveSystem.SaveGameData
+        (
+            stage: _currentStage,
+            speedLimit: _speedLimit,
+            timeLimit: _timeLimitMin,
+            spawnTimeDelay: _mapGenerator.SpawnTimeDelay,
+            obstaclePercentage: _mapGenerator.ObstaclesPercentage,
+            obstacleGap: _mapGenerator.ObstacleGap,
+            comboTimeBonusLimit: _mapGenerator.ComboTimeBonusLimit
+        );
+    }
+
+    private void LoadGame()
+    {
+        GameData gameData = SaveSystem.LoadGameData();
+        if (gameData != null)
+        {
+            _currentStage = gameData.stage;
+            _speedLimit = gameData.speedLimit;
+            _timeLimitMin = gameData.timeLimit;
+            _mapGenerator.SpawnTimeDelay = gameData.spawnTimeDelay;
+            _mapGenerator.ObstaclesPercentage = gameData.obstaclePercentage;
+            _mapGenerator.ObstacleGap = gameData.obstacleGap;
+            _mapGenerator.ComboTimeBonusLimit = gameData.comboTimeBonusLimit;
+            _currentTime = _timeLimitMin * 60.0f;
+            _uiManager.SetRemainingTime(_currentTime);
+            _uiManager.ShowStartUi(_currentStage);
+        }
+        else
+        {
+            SaveGame();
+        }
+    }
+
+    private IEnumerator RaiseSpeed(float time)
+    {
+        while (_gameState == GameState.IN_PROGRESS)
+        {
+            yield return new WaitForSecondsRealtime(time);
+            if (_gameState != GameState.IN_PROGRESS)
+                break;
+            while (_player.IsStunned)
+                yield return null;
+            if (_player != null)
+            {
+                if (_currentSpeed < _speedLimit)
+                    _currentSpeed += _speedDelta;
+            }
+        }
+    }
+
+    private void RestartSpeed()
+    {
+        _uiManager.HideAntiStunButton();
+        _currentSpeed = _startSpeed;
+        _combo = 0;
+    }
+
+    private void RemoveObstacles()
+    {
+        foreach (Transform child in _obstacles.transform)
+        {
+            Destroy(child.gameObject);
+        }
+    }
+
+    private void CompletedStage()
+    {
+        _gameState = GameState.COMPLETED;
+        _currentSpeed = 0.0f;
+        AntiStunTapCounter = -1;
+        _currentStage += 1;
+        if (_speedLimit < _globalLimitSpeedLimit)
+            _speedLimit += 0.5f;
+        _timeLimitMin += 1f / 6f;
+        _currentTime = _timeLimitMin * 60.0f;
+        if (_mapGenerator.SpawnTimeDelay > _globalLimitSpawnTimeDelay)
+            _mapGenerator.SpawnTimeDelay -= 0.03f;
+        if (_mapGenerator.ObstaclesPercentage > _globalLimitObstaclePercentage)
+            _mapGenerator.ObstaclesPercentage -= 0.1f;
+        if (_mapGenerator.ObstacleGap > globalLimitObstacleGap)
+            _mapGenerator.ObstacleGap -= 1;
+        if (_mapGenerator.ComboTimeBonusLimit > _globalLimitComboTimeBonuslimit)
+            _mapGenerator.ComboTimeBonusLimit -= 1;
+        _pointsCounter = 0;
+        _combo = 0;
+        RemoveObstacles();
+        _obstacles.SetActive(false);
+        _uiManager.HideInGameUi();
+        _uiManager.ShowTimeOutUi(_currentStage - 1);
+        _player.transform.parent.gameObject.SetActive(false);
+        SaveGame();  
     }
 }
 

@@ -6,15 +6,41 @@ using TMPro;
 
 public class UiManager : MonoBehaviour
 {
-    [SerializeField] private GameManager _gameManager;
-    [SerializeField] private TextMeshProUGUI _pointsText;
-    [SerializeField] private TextMeshProUGUI _remainingTimeText;
-    [SerializeField] private TextMeshProUGUI _tapCounter;
-    [SerializeField] private Image _startButtonIcon;
-    [SerializeField] private Image _retryButtonIcon;
-    [SerializeField] private Image _gameOverIcon;
-    [SerializeField] private Image _successIcon;
-    [SerializeField] private TextMeshProUGUI _result;
+    [SerializeField]
+    private GameManager _gameManager;
+
+    [SerializeField]
+    private TextMeshProUGUI _pointsText;
+
+    [SerializeField]
+    private TextMeshProUGUI _remainingTimeText;
+
+    [SerializeField]
+    private TextMeshProUGUI _tapCounter;
+
+    [SerializeField]
+    private Image _startButtonIcon;
+
+    [SerializeField]
+    private Image _retryButtonIcon;
+
+    [SerializeField]
+    private Image _nextButtonIcon;
+
+    [SerializeField]
+    private Image _resetButtonIcon;
+
+    [SerializeField]
+    private Image _gameOverIcon;
+
+    [SerializeField]
+    private Image _successIcon;
+
+    [SerializeField]
+    private TextMeshProUGUI _result;
+
+    [SerializeField]
+    private TextMeshProUGUI _stageNumber;
 
     void Start()
     {
@@ -30,21 +56,28 @@ public class UiManager : MonoBehaviour
         }
     }
 
-    public void ShowStartUi()
+    public void ShowStartUi(int stage)
     {
+        _stageNumber.text = stage.ToString();
+        _stageNumber.transform.parent.gameObject.SetActive(true);
         _startButtonIcon.gameObject.SetActive(true);
+        _resetButtonIcon.gameObject.SetActive(true);
     }
 
     public void HideStartUi()
     {
+        _stageNumber.transform.parent.gameObject.SetActive(false);
         _startButtonIcon.gameObject.SetActive(false);
+        _resetButtonIcon.gameObject.SetActive(false);
     }
 
     public void ShowInGameUi()
     {
         _startButtonIcon.gameObject.SetActive(false);
+        _nextButtonIcon.gameObject.SetActive(false);
         _gameOverIcon.gameObject.SetActive(false);
         _retryButtonIcon.gameObject.SetActive(false);
+        _successIcon.gameObject.SetActive(false);
         _pointsText.transform.parent.gameObject.SetActive(true);
         _remainingTimeText.transform.parent.gameObject.SetActive(true);
     }
@@ -58,26 +91,37 @@ public class UiManager : MonoBehaviour
 
     public void HideTimeOutUi()
     {
-        _gameOverIcon.gameObject.SetActive(false);
-        _retryButtonIcon.gameObject.SetActive(false);
+        _stageNumber.transform.parent.gameObject.SetActive(false);
+        _result.transform.parent.gameObject.SetActive(false);
+        _successIcon.gameObject.SetActive(false);
+        _nextButtonIcon.gameObject.SetActive(false);
     }
 
-    public void ShowTimeOutUi()
+    public void ShowTimeOutUi(int stage)
     {
-        _gameOverIcon.gameObject.SetActive(true);
-        _retryButtonIcon.gameObject.SetActive(true);
+        HideAntiStunButton();
+        _stageNumber.text = stage.ToString();
+        _stageNumber.transform.parent.gameObject.SetActive(true);
+        _result.text = _pointsText.text;
+        _result.transform.parent.gameObject.SetActive(true);
+        _successIcon.gameObject.SetActive(true);
+        _nextButtonIcon.gameObject.SetActive(true);
     }
 
 
     public void HideGameOverUi()
     {
+        _stageNumber.transform.parent.gameObject.SetActive(false);
         _result.transform.parent.gameObject.SetActive(false);
         _gameOverIcon.gameObject.SetActive(false);
         _retryButtonIcon.gameObject.SetActive(false);
     }
 
-    public void ShowGameOverUi()
+    public void ShowGameOverUi(int stage)
     {
+        HideAntiStunButton();
+        _stageNumber.text = stage.ToString();
+        _stageNumber.transform.parent.gameObject.SetActive(true);
         _result.text = _pointsText.text;
         _result.transform.parent.gameObject.SetActive(true);
         _gameOverIcon.gameObject.SetActive(true);
