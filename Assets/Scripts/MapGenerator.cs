@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
 {
+    public float SpawnTimeDelay { get => _spawnTimeDelay; set => _spawnTimeDelay = value; }
+    public float ObstaclesPercentage { get => _obstaclesPercentage; set => _obstaclesPercentage = value; }
+    public int ObstacleGap { get => _obstacleGap; set => _obstacleGap = value; }
+    public int ComboTimeBonusLimit { get => _comboTimeBonusLimit; set => _comboTimeBonusLimit = value; }
+
     [SerializeField]
     private GameManager _gameManager;
 
@@ -30,7 +35,7 @@ public class MapGenerator : MonoBehaviour
     private int _comboTimeBonusLimit = 2;
 
     private Player _player;
-    
+
     void Start()
     {
         _player = _gameManager.Player;

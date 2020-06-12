@@ -60,6 +60,7 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private Player _player;
 
+    private int _currentStage;
     private float _currentTime;
     private int _combo = 0;
 
@@ -68,12 +69,14 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        _currentStage = 1;
         _pointsCounter = 0;
         _currentSpeed = _startSpeed;
         _gameState = GameState.MENU;
         _uiManager.ShowStartUi();
         _currentTime = _timeLimitMin * 60.0f;
         _uiManager.SetRemainingTime(_currentTime);
+        LoadGame();
     }
 
     void Update()
@@ -103,6 +106,36 @@ public class GameManager : MonoBehaviour
         }
         else
             _uiManager.SetRemainingTime(0);
+    }
+
+    private void LoadGame()
+    {
+        GameData gameData = SaveSystem.LoadGameData();
+        if (gameData != null)
+        {
+            _currentStage = gameData.stage;
+            _speedLimit = gameData.speedLimit;
+            _timeLimitMin = gameData.timeLimit;
+            _mapGenerator.SpawnTimeDelay = gameData.spawnTimeDelay;
+            _mapGenerator.ObstaclesPercentage = gameData.obstaclePercentage;
+            _mapGenerator.ObstacleGap = gameData.obstacleGap;
+            _mapGenerator.ComboTimeBonusLimit = gameData.comboTimeBonusLimit;
+            _currentTime = _timeLimitMin * 60.0f;
+            _uiManager.SetRemainingTime(_currentTime);
+        }
+        else
+        {
+            SaveSystem.SaveGameData
+                (
+                    stage: _currentStage,
+                    speedLimit: _speedLimit,
+                    timeLimit: _timeLimitMin,
+                    spawnTimeDelay: _mapGenerator.SpawnTimeDelay,
+                    obstaclePercentage: _mapGenerator.ObstaclesPercentage,
+                    obstacleGap: _mapGenerator.ObstacleGap,
+                    comboTimeBonusLimit: _mapGenerator.ComboTimeBonusLimit
+                );
+        }
     }
 
     private IEnumerator RaiseSpeed(float time)
