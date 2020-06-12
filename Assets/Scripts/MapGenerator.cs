@@ -17,11 +17,17 @@ public class MapGenerator : MonoBehaviour
     private GameObject _obstacles;
 
     [SerializeField]
+    private float _spawnTimeDelay = 0.3f;
+
+    [SerializeField]
     [Range(0.0f, 1.0f)]
     private float _obstaclesPercentage;
 
     [SerializeField]
     private int _obstacleGap = 5;
+
+    [SerializeField]
+    private int _comboTimeBonusLimit = 2;
 
     private Player _player;
     
@@ -91,7 +97,7 @@ public class MapGenerator : MonoBehaviour
                 teeth.transform.position = spawnPosition;
                 teeth.transform.SetParent(_obstacles.transform);
                 _gameManager.Combo++;
-                if (_gameManager.Combo >= 20)
+                if (_gameManager.Combo >= _comboTimeBonusLimit)
                 {
                     float side = Random.Range(0.0f, 1.0f);
                     GameObject timeBonus = SpawnGameObject("timeBonus");
@@ -156,7 +162,7 @@ public class MapGenerator : MonoBehaviour
                 }
                 obstacleInt = 0;
             }
-            yield return new WaitForSecondsRealtime(0.3f);
+            yield return new WaitForSecondsRealtime(_spawnTimeDelay);
         }
         yield return null;
     }

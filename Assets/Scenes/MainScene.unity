@@ -2064,8 +2064,10 @@ MonoBehaviour:
   - {fileID: 2803252809315670418, guid: e199a7ef66577224895c4bdf7ff7629e, type: 3}
   - {fileID: 4711743636541731497, guid: 47d541fcc8a2da2439e5d6abb2b6cf20, type: 3}
   _obstacles: {fileID: 1842289406}
+  _spawnTimeDelay: 0.3
   _obstaclesPercentage: 0.7
   _obstacleGap: 5
+  _comboTimeBonusLimit: 20
 --- !u!4 &1008023549
 Transform:
   m_ObjectHideFlags: 0
@@ -3399,7 +3401,8 @@ MonoBehaviour:
   _obstacles: {fileID: 1842289406}
   _swipeDetector: {fileID: 1959175502}
   _startSpeed: 5
-  _speedLimit: 10
+  _speedLimit: 7
+  _maxSpeedLimit: 15
   _currentSpeed: 0
   _timeLimitMin: 1
   _speedDelta: 0.5

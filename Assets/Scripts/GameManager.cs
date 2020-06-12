@@ -43,6 +43,9 @@ public class GameManager : MonoBehaviour
     private float _speedLimit = 10f;
 
     [SerializeField]
+    private float _maxSpeedLimit = 15f;
+
+    [SerializeField]
     private float _currentSpeed = 0f;
 
     [SerializeField]
