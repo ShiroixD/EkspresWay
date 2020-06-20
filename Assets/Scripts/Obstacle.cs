@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class Obstacle : MonoBehaviour
 {
+    [SerializeField] private MeshRenderer modelRenderer;
+
+    public MeshRenderer ModelRenderer => modelRenderer;
     private GameManager _gameManager;
 
     void Start()

@@ -71,9 +71,14 @@ public class MapGenerator : MonoBehaviour
                     objectToSpawn = _obstaclesObjectArray[2];
                     break;
                 }
-            case "thread":
+            case "thread_left":
                 {
                     objectToSpawn = _obstaclesObjectArray[3];
+                    break;
+                }
+            case "thread_right":
+                {
+                    objectToSpawn = _obstaclesObjectArray[6];
                     break;
                 }
             case "materialBreak":
@@ -129,9 +134,9 @@ public class MapGenerator : MonoBehaviour
             {
                 float side = Random.Range(0.0f, 1.0f);
                 GameObject tooth;
-                GameObject thread = SpawnGameObject("thread");
                 if (side < 0.5f)
                 {
+                    GameObject thread = SpawnGameObject("thread_right");
                     tooth = SpawnGameObject("leftTooth");
                     tooth.transform.position = new Vector3(-0.1f, spawnPosition.y, spawnPosition.z);
                     tooth.transform.SetParent(_obstacles.transform);
@@ -141,6 +146,7 @@ public class MapGenerator : MonoBehaviour
                 }
                 else
                 {
+                    GameObject thread = SpawnGameObject("thread_left");
                     tooth = SpawnGameObject("rightTooth");
                     tooth.transform.position = new Vector3(0.1f, spawnPosition.y, spawnPosition.z);
                     tooth.transform.SetParent(_obstacles.transform);
