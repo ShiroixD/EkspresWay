@@ -68,6 +68,7 @@ public class Player : MonoBehaviour
                 }
             case "Tooth":
                 {
+                    collision.gameObject.GetComponentInChildren<Animation>().Play();
                     break;
                 }
             case "Thread":

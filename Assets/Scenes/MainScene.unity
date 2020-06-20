@@ -1880,7 +1880,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 731826892}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1.02, z: 0}
+  m_LocalPosition: {x: 0, y: 1.02, z: 0.24}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 1745681729}
@@ -2486,7 +2486,8 @@ MonoBehaviour:
   _obstaclesSpawnPoint: {fileID: 728980226}
   _obstaclesObjectArray:
   - {fileID: 658758451156687089, guid: 27460b5e41820d446af3f036397c4d36, type: 3}
-  - {fileID: 7857573828661583205, guid: 1f39e097ea9b5424d9b3af0769d660f4, type: 3}
+  - {fileID: 658758451156687089, guid: 0853e89e0d2a3d14993a0e3a22850110, type: 3}
+  - {fileID: 658758451156687089, guid: 71bb8404b6067a54285937375e4f966f, type: 3}
   - {fileID: 2803252809315670418, guid: 7c3c5232dc485724b958f1adce765264, type: 3}
   - {fileID: 2803252809315670418, guid: e199a7ef66577224895c4bdf7ff7629e, type: 3}
   - {fileID: 4711743636541731497, guid: 47d541fcc8a2da2439e5d6abb2b6cf20, type: 3}

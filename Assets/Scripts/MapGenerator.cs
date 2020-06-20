@@ -61,24 +61,29 @@ public class MapGenerator : MonoBehaviour
                     objectToSpawn = _obstaclesObjectArray[0];
                     break;
                 }
-            case "tooth":
+            case "leftTooth":
                 {
                     objectToSpawn = _obstaclesObjectArray[1];
                     break;
                 }
-            case "thread":
+            case "rightTooth":
                 {
                     objectToSpawn = _obstaclesObjectArray[2];
                     break;
                 }
-            case "materialBreak":
+            case "thread":
                 {
                     objectToSpawn = _obstaclesObjectArray[3];
                     break;
                 }
-            case "timeBonus":
+            case "materialBreak":
                 {
                     objectToSpawn = _obstaclesObjectArray[4];
+                    break;
+                }
+            case "timeBonus":
+                {
+                    objectToSpawn = _obstaclesObjectArray[5];
                     break;
                 }
         }
@@ -123,11 +128,12 @@ public class MapGenerator : MonoBehaviour
             else if (percent >= _obstaclesPercentage && percent < breakPercent)
             {
                 float side = Random.Range(0.0f, 1.0f);
-                GameObject tooth = SpawnGameObject("tooth");
+                GameObject tooth;
                 GameObject thread = SpawnGameObject("thread");
                 if (side < 0.5f)
                 {
-                    tooth.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
+                    tooth = SpawnGameObject("leftTooth");
+                    tooth.transform.position = new Vector3(-0.1f, spawnPosition.y, spawnPosition.z);
                     tooth.transform.SetParent(_obstacles.transform);
 
                     thread.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
@@ -135,7 +141,8 @@ public class MapGenerator : MonoBehaviour
                 }
                 else
                 {
-                    tooth.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
+                    tooth = SpawnGameObject("rightTooth");
+                    tooth.transform.position = new Vector3(0.1f, spawnPosition.y, spawnPosition.z);
                     tooth.transform.SetParent(_obstacles.transform);
 
                     thread.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
@@ -146,12 +153,13 @@ public class MapGenerator : MonoBehaviour
             else
             {
                 float side = Random.Range(0.0f, 1.0f);
-                GameObject tooth = SpawnGameObject("tooth");
+                GameObject tooth;
                 GameObject materialBreak = SpawnGameObject("materialBreak");
 
                 if (side < 0.5f)
                 {
-                    tooth.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
+                    tooth = SpawnGameObject("leftTooth");
+                    tooth.transform.position = new Vector3(-0.1f, spawnPosition.y, spawnPosition.z);
                     tooth.transform.SetParent(_obstacles.transform);
 
                     materialBreak.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
@@ -159,7 +167,8 @@ public class MapGenerator : MonoBehaviour
                 }
                 else
                 {
-                    tooth.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
+                    tooth = SpawnGameObject("rightTooth");
+                    tooth.transform.position = new Vector3(0.1f, spawnPosition.y, spawnPosition.z);
                     tooth.transform.SetParent(_obstacles.transform);
 
                     materialBreak.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
