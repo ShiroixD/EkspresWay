@@ -2489,9 +2489,10 @@ MonoBehaviour:
   - {fileID: 658758451156687089, guid: 0853e89e0d2a3d14993a0e3a22850110, type: 3}
   - {fileID: 658758451156687089, guid: 71bb8404b6067a54285937375e4f966f, type: 3}
   - {fileID: 2803252809315670418, guid: cc848f98323c94d4a9f23fa9b6aa7d72, type: 3}
-  - {fileID: 2803252809315670418, guid: e199a7ef66577224895c4bdf7ff7629e, type: 3}
+  - {fileID: 658758451156687089, guid: 6371d53cf32da35429b76984ea48f5de, type: 3}
   - {fileID: 4711743636541731497, guid: 47d541fcc8a2da2439e5d6abb2b6cf20, type: 3}
   - {fileID: 2803252809315670418, guid: 7c3c5232dc485724b958f1adce765264, type: 3}
+  - {fileID: 658758451156687089, guid: b2ee9476944245447a57034a6b48378f, type: 3}
   _obstacles: {fileID: 1842289406}
   _spawnTimeDelay: 0.36
   _obstaclesPercentage: 0.9

@@ -81,9 +81,14 @@ public class MapGenerator : MonoBehaviour
                     objectToSpawn = _obstaclesObjectArray[6];
                     break;
                 }
-            case "materialBreak":
+            case "leftMaterialBreak":
                 {
                     objectToSpawn = _obstaclesObjectArray[4];
+                    break;
+                }
+            case "rightMaterialBreak":
+                {
+                    objectToSpawn = _obstaclesObjectArray[7];
                     break;
                 }
             case "timeBonus":
@@ -160,24 +165,26 @@ public class MapGenerator : MonoBehaviour
             {
                 float side = Random.Range(0.0f, 1.0f);
                 GameObject tooth;
-                GameObject materialBreak = SpawnGameObject("materialBreak");
+                GameObject materialBreak;
 
                 if (side < 0.5f)
                 {
+                    materialBreak = SpawnGameObject("rightMaterialBreak");
                     tooth = SpawnGameObject("leftTooth");
                     tooth.transform.position = new Vector3(-0.1f, spawnPosition.y, spawnPosition.z);
                     tooth.transform.SetParent(_obstacles.transform);
 
-                    materialBreak.transform.position = new Vector3(1.2f, spawnPosition.y, spawnPosition.z);
+                    materialBreak.transform.position = new Vector3(0.1f, spawnPosition.y, spawnPosition.z);
                     materialBreak.transform.SetParent(_obstacles.transform);
                 }
                 else
                 {
+                    materialBreak = SpawnGameObject("leftMaterialBreak");
                     tooth = SpawnGameObject("rightTooth");
                     tooth.transform.position = new Vector3(0.1f, spawnPosition.y, spawnPosition.z);
                     tooth.transform.SetParent(_obstacles.transform);
 
-                    materialBreak.transform.position = new Vector3(-1.2f, spawnPosition.y, spawnPosition.z);
+                    materialBreak.transform.position = new Vector3(-0.1f, spawnPosition.y, spawnPosition.z);
                     materialBreak.transform.SetParent(_obstacles.transform);
                 }
                 obstacleInt = 0;
