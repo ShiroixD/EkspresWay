@@ -42,10 +42,20 @@ public class UiManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI _stageNumber;
 
-    void Start()
-    {
-        
-    }
+    [SerializeField]
+    private GameObject _scrollArea;
+
+    [SerializeField]
+    private GameObject _pointRecords;
+
+    [SerializeField]
+    private GameObject _scrollBar;
+
+    [SerializeField]
+    private GameObject _pointRecordPrefab;
+
+    [SerializeField]
+    private int _scrollBarMinAmount = 3;
 
     void Update()
     {
@@ -62,6 +72,7 @@ public class UiManager : MonoBehaviour
         _stageNumber.transform.parent.gameObject.SetActive(true);
         _startButtonIcon.gameObject.SetActive(true);
         _resetButtonIcon.gameObject.SetActive(true);
+        ReloadPointRecords();
     }
 
     public void HideStartUi()
@@ -69,6 +80,7 @@ public class UiManager : MonoBehaviour
         _stageNumber.transform.parent.gameObject.SetActive(false);
         _startButtonIcon.gameObject.SetActive(false);
         _resetButtonIcon.gameObject.SetActive(false);
+        _scrollArea.gameObject.SetActive(false);
     }
 
     public void ShowInGameUi()
@@ -95,6 +107,7 @@ public class UiManager : MonoBehaviour
         _result.transform.parent.gameObject.SetActive(false);
         _successIcon.gameObject.SetActive(false);
         _nextButtonIcon.gameObject.SetActive(false);
+        _scrollArea.gameObject.SetActive(false);
     }
 
     public void ShowTimeOutUi(int stage)
@@ -106,6 +119,7 @@ public class UiManager : MonoBehaviour
         _result.transform.parent.gameObject.SetActive(true);
         _successIcon.gameObject.SetActive(true);
         _nextButtonIcon.gameObject.SetActive(true);
+        ReloadPointRecords();
     }
 
 
@@ -115,6 +129,7 @@ public class UiManager : MonoBehaviour
         _result.transform.parent.gameObject.SetActive(false);
         _gameOverIcon.gameObject.SetActive(false);
         _retryButtonIcon.gameObject.SetActive(false);
+        _scrollArea.gameObject.SetActive(false);
     }
 
     public void ShowGameOverUi(int stage)
@@ -126,6 +141,7 @@ public class UiManager : MonoBehaviour
         _result.transform.parent.gameObject.SetActive(true);
         _gameOverIcon.gameObject.SetActive(true);
         _retryButtonIcon.gameObject.SetActive(true);
+        ReloadPointRecords();
     }
 
     public string FormatTime(float timeSec)
@@ -158,5 +174,31 @@ public class UiManager : MonoBehaviour
     public void HideAntiStunButton()
     {
         _tapCounter.transform.parent.gameObject.SetActive(false);
+    }
+
+    private void ReloadPointRecords()
+    {
+        _scrollArea.gameObject.SetActive(true);
+        foreach (Transform child in _pointRecords.transform)
+        {
+            Destroy(child.gameObject);
+        }
+        int pointsRecordAmount = _gameManager.PointRecords.Count;
+        if (pointsRecordAmount > _scrollBarMinAmount)
+            _scrollBar.GetComponent<RectTransform>().localScale = new Vector3(1, 1, 1);
+        else
+            _scrollBar.GetComponent<RectTransform>().localScale = new Vector3(0, 0, 0);
+        for (int i = pointsRecordAmount - 1; i >= 0; i--)
+        {
+            GameObject record = Instantiate(_pointRecordPrefab, _pointRecords.transform);
+            GameObject stage = record.transform.Find("Stage").gameObject;
+            GameObject points = record.transform.Find("Points").gameObject;
+
+            if (stage != null && points != null)
+            {
+                stage.GetComponent<TextMeshProUGUI>().text = (i + 1).ToString();
+                points.GetComponent<TextMeshProUGUI>().text = _gameManager.PointRecords[i].ToString();
+            }
+        }
     }
 }

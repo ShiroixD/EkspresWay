@@ -1,18 +1,19 @@
 ﻿using UnityEngine;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Collections.Generic;
 
 public static class SaveSystem
 {
     public const string pathFile = "/EkspresWayData.file";
-    public static void SaveGameData(int stage, float speedLimit, float timeLimit, float spawnTimeDelay, float obstaclePercentage, int obstacleGap, int comboTimeBonusLimit)
+    public static void SaveGameData(int stage, float speedLimit, float timeLimit, float spawnTimeDelay, float obstaclePercentage, int obstacleGap, int comboTimeBonusLimit, List<float> pointsRecords)
     {
         BinaryFormatter formatter = new BinaryFormatter();
         string path = Application.persistentDataPath + pathFile;
         if (File.Exists(path))
             File.Delete(path);
         FileStream stream = new FileStream(path, FileMode.Create);
-        GameData data = new GameData(stage, speedLimit, timeLimit, spawnTimeDelay, obstaclePercentage, obstacleGap, comboTimeBonusLimit);
+        GameData data = new GameData(stage, speedLimit, timeLimit, spawnTimeDelay, obstaclePercentage, obstacleGap, comboTimeBonusLimit, pointsRecords);
         formatter.Serialize(stream, data);
         stream.Close();
     }

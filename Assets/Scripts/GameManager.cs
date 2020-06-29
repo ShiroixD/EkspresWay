@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     public Player Player { get => _player; set => _player = value; }
     public MusicManager MusicManager { get => _musicManager; set => _musicManager = value; }
     public int Combo { get => _combo; set => _combo = value; }
+    public List<float> PointRecords { get => _pointRecords; }
 
     [SerializeField]
     private Camera _camera;
@@ -78,6 +79,7 @@ public class GameManager : MonoBehaviour
     private int _currentStage;
     private float _currentTime;
     private int _combo = 0;
+    private List<float> _pointRecords;
 
     private GameState _gameState;
     private long _pointsCounter;
@@ -87,6 +89,7 @@ public class GameManager : MonoBehaviour
         _currentStage = 1;
         _pointsCounter = 0;
         _currentSpeed = 0;
+        _pointRecords = new List<float>();
         _gameState = GameState.MENU;
         _uiManager.ShowStartUi(_currentStage);
         _currentTime = _timeLimitMin * 60.0f;
@@ -204,13 +207,15 @@ public class GameManager : MonoBehaviour
         _speedLimit = 4f;
         _timeLimitMin = 0.5f;
         _currentTime = _timeLimitMin * 60.0f;
+        _pointRecords.Clear();
         AntiStunTapCounter = -1;
         _mapGenerator.SpawnTimeDelay = 0.36f;
         _mapGenerator.ObstaclesPercentage = 0.9f;
         _mapGenerator.ObstacleGap = 10;
         _mapGenerator.ComboTimeBonusLimit = 30;
         _combo = 0;
-        _uiManager.ShowStartUi(_currentStage);  
+        _uiManager.HideStartUi();
+        _uiManager.ShowStartUi(_currentStage);
         _uiManager.SetRemainingTime(_currentTime);
         SaveGame();
     }
@@ -225,7 +230,8 @@ public class GameManager : MonoBehaviour
             spawnTimeDelay: _mapGenerator.SpawnTimeDelay,
             obstaclePercentage: _mapGenerator.ObstaclesPercentage,
             obstacleGap: _mapGenerator.ObstacleGap,
-            comboTimeBonusLimit: _mapGenerator.ComboTimeBonusLimit
+            comboTimeBonusLimit: _mapGenerator.ComboTimeBonusLimit,
+            pointsRecords: _pointRecords
         );
     }
 
@@ -241,6 +247,7 @@ public class GameManager : MonoBehaviour
             _mapGenerator.ObstaclesPercentage = gameData.obstaclePercentage;
             _mapGenerator.ObstacleGap = gameData.obstacleGap;
             _mapGenerator.ComboTimeBonusLimit = gameData.comboTimeBonusLimit;
+            _pointRecords = new List<float>(gameData.pointRecords);
             _currentTime = _timeLimitMin * 60.0f;
             _uiManager.SetRemainingTime(_currentTime);
             _uiManager.ShowStartUi(_currentStage);
@@ -301,6 +308,7 @@ public class GameManager : MonoBehaviour
             _mapGenerator.ObstacleGap -= 1;
         if (_mapGenerator.ComboTimeBonusLimit > _globalLimitComboTimeBonuslimit)
             _mapGenerator.ComboTimeBonusLimit -= 1;
+        _pointRecords.Add(_pointsCounter);
         _pointsCounter = 0;
         _combo = 0;
         RemoveObstacles();

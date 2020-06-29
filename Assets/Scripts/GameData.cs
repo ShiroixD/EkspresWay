@@ -13,8 +13,9 @@ public class GameData
     public float obstaclePercentage;
     public int obstacleGap;
     public int comboTimeBonusLimit;
+    public List<float> pointRecords;
 
-    public GameData(int stage, float speedLimit, float timeLimit, float spawnTimeDelay, float obstaclePercentage, int obstacleGap, int comboTimeBonusLimit)
+    public GameData(int stage, float speedLimit, float timeLimit, float spawnTimeDelay, float obstaclePercentage, int obstacleGap, int comboTimeBonusLimit, List<float> pointsRecords)
     {
         this.stage = stage;
         this.speedLimit = speedLimit;
@@ -23,5 +24,6 @@ public class GameData
         this.obstaclePercentage = obstaclePercentage;
         this.obstacleGap = obstacleGap;
         this.comboTimeBonusLimit = comboTimeBonusLimit;
+        this.pointRecords = pointsRecords;
     }
 }
