@@ -76,6 +76,10 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     private Player _player;
 
+    [SerializeField]
+    private List<GameObject>_backgroundPacks;
+    private GameObject _activeBackgrund;
+
     private int _currentStage;
     private float _currentTime;
     private int _combo = 0;
@@ -86,6 +90,7 @@ public class GameManager : MonoBehaviour
 
     void Start()
     {
+        _activeBackgrund = _backgroundPacks[0];
         _currentStage = 1;
         _pointsCounter = 0;
         _currentSpeed = 0;
@@ -94,6 +99,7 @@ public class GameManager : MonoBehaviour
         _uiManager.ShowStartUi(_currentStage);
         _currentTime = _timeLimitMin * 60.0f;
         _uiManager.SetRemainingTime(_currentTime);
+        Debug.Log(Application.persistentDataPath);
         LoadGame();
     }
 
@@ -128,6 +134,7 @@ public class GameManager : MonoBehaviour
 
     public void StartGame()
     {
+        _activeBackgrund.SetActive(true);
         _gameState = GameState.IN_PROGRESS;
         _currentSpeed = _startSpeed;
         _uiManager.HideStartUi();
@@ -187,6 +194,10 @@ public class GameManager : MonoBehaviour
 
     public void NextStage()
     {
+        _activeBackgrund.SetActive(false);
+        int random = UnityEngine.Random.Range(0, 4);
+        _activeBackgrund = _backgroundPacks[random];
+        _activeBackgrund.SetActive(true);
         _gameState = GameState.IN_PROGRESS;
         _player.IsStunned = false;
         _currentSpeed = _startSpeed;
@@ -231,7 +242,8 @@ public class GameManager : MonoBehaviour
             obstaclePercentage: _mapGenerator.ObstaclesPercentage,
             obstacleGap: _mapGenerator.ObstacleGap,
             comboTimeBonusLimit: _mapGenerator.ComboTimeBonusLimit,
-            pointsRecords: _pointRecords
+            pointsRecords: _pointRecords,
+            activeBackground: _backgroundPacks.IndexOf(_activeBackgrund)
         );
     }
 
@@ -240,6 +252,7 @@ public class GameManager : MonoBehaviour
         GameData gameData = SaveSystem.LoadGameData();
         if (gameData != null)
         {
+            _activeBackgrund.SetActive(false);
             _currentStage = gameData.stage;
             _speedLimit = gameData.speedLimit;
             _timeLimitMin = gameData.timeLimit;
@@ -251,6 +264,8 @@ public class GameManager : MonoBehaviour
             _currentTime = _timeLimitMin * 60.0f;
             _uiManager.SetRemainingTime(_currentTime);
             _uiManager.ShowStartUi(_currentStage);
+            _activeBackgrund = _backgroundPacks[gameData.activeBackground];
+            _activeBackgrund.SetActive(true);
         }
         else
         {
