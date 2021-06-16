@@ -142,6 +142,7 @@ public class GameManager : MonoBehaviour
         _playerObject.SetActive(true);
         _obstacles.SetActive(true);
         _mapGenerator.StartGenerating();
+        _player.IsStunned = false;
         StartCoroutine(RaiseSpeed(_raiseSpeedInterval));
     }
 
@@ -172,6 +173,7 @@ public class GameManager : MonoBehaviour
         _currentTime = _timeLimitMin * 60.0f;
         _uiManager.SetRemainingTime(_currentTime);
         _player.transform.parent.gameObject.SetActive(true);
+        _player.IsStunned = false;
         _mapGenerator.StartGenerating();
         StartCoroutine(RaiseSpeed(_raiseSpeedInterval));
     }
